@@ -8,7 +8,7 @@ To run the bot, you need a config.json containing your bot token.
 
 ```json
 {
-  token: "your-token"
+  "token": "your-token"
 }
 ```
 
