@@ -1,0 +1,15 @@
+{
+  "name": "yg-discord-bot",
+  "version": "1.0.0",
+  "description": "Bot for YG discord server",
+  "main": "index.js",
+  "scripts": {
+    "test": "tsc index.ts && node index.js"
+  },
+  "author": "Micah Henney",
+  "license": "ISC",
+  "dependencies": {
+    "@types/npm": "^2.0.31",
+    "discord.js": "^12.5.1"
+  }
+}
