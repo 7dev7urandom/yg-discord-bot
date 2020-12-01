@@ -1,6 +1,8 @@
 import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild } from 'discord.js'; 
 import { get } from 'https';
 import { readFileSync } from 'fs';
+import _ from 'underscore';
+
 const blogId = '767695352144461825';
 
 const client = new Client();
@@ -9,13 +11,7 @@ try{
     client.once('ready', async () => {
         console.log("Client ready!");
         mainGuild = client.guilds.cache.get('762299189290991616'); // Youth Group
-        // client.user?.setPresence({
-        //     status: "online",
-        //     activity: {
-        //         type: "WATCHING",
-        //         name: "for !aaa"
-        //     }
-        // });
+
         const x = mainGuild?.channels.resolve('782854127520579607');
         if (x) (<TextChannel> await x.fetch()).send("YG bot loaded");
     });
@@ -50,8 +46,7 @@ try{
                         messages.forEach(message => {
                             currentMessageCount++;
                             totalMessages++;
-                            // console.log(message.createdAt.toDateString());
-                            // console.log(`MessageJson: ${JSON.stringify(messageJson)}`);
+
                             lastMessage = message;
                             if(messageJson[message.createdAt.toDateString()] === undefined) {
                                 // We don't have any data saved for today
@@ -84,9 +79,7 @@ try{
                 }
                 messageJson = {};
                 message.channel.messages.cache.forEach(message => {
-                    // currentMessageCount++;
-                    // totalMessages++;
-                    // console.log(message.createdAt.toDateString());
+
                     console.log(`MessageJson: ${JSON.stringify(messageJson)}`);
                     // lastMessage = message;
                     if(messageJson[message.createdAt.toDateString()] === undefined) {
@@ -124,29 +117,7 @@ try{
             } else {
                 message.reply("Sorry, only Administrators can use this feature.")
             }
-        // } else if (message.content.startsWith('!poll')) {
-        //     const pollsChannel = await client.channels.cache.get('733177335301406791');
-        //     if(!pollsChannel) return;
-        //     let args = message.content.split("=");
-        //     if(args.length < 3) {
-        //         message.reply("The syntax for this command is `!poll=<possible-reactions-seperated-by-commas>=<text>`\nExample:\n `!poll=👍,👎=Is MSG Bot awesome?` ");
-        //         return;
-        //     }
-        //     args.shift();
-        //     let reactions = args.shift()?.split(",");
-        //     let polltext = args.join("=");
-        //     const messageToSend = new MessageEmbed()
-        //     .setColor('#caed05')
-        //     .setTitle(`Poll by ${message.member?.displayName}:`)
-        //     .setDescription(polltext);
-        //     console.log("Adding poll: " + polltext);
-        //     //@ts-ignore
-        //     pollsChannel.send(messageToSend).then(sentMessage => {
-        //         reactions?.forEach(reaction => {
-        //             sentMessage.react(reaction.trim());
-        //         })
-        //     });
-        //     message.delete();
+
         } else if (message.content.startsWith('!purge')) {
             if(!message.member?.hasPermission('MANAGE_MESSAGES')) {
                 message.reply("You do not have permission to do that!");
@@ -187,57 +158,9 @@ try{
                 return;
             }
             message.reply("Missing parameter. Syntax: `!purge <<numberOfMessages>|<username>|all> [numberOfMessages]`");
-        // } else if (message.content.startsWith('!aaa')) {
-        //     message.delete();
-        //     message.reply("You found the secret easter egg! You now have the rainbow role.");
-        //     message.member?.roles.add('750606553177915443');
-        // } else if (message.content.startsWith('!disable')) {
-        //     message.guild?.channels.cache.forEach(channel => {
-        //         // if(channel.type !== "text" || !channel.parentID || channel.parentID !== '710742381409861643') return;
-        //         // if(channel.id !== '710742381409861645') return;
-        //         if ((channel.type !== 'category' || channel.id !== '710742381409861643') && channel.id !== '710742381409861645' && channel.id !== '753468247948656671') return;
-        //         channel.updateOverwrite('749869767527104513', { SEND_MESSAGES: false }, 'Disabling message send abilities for people who should be in school');
-        //     });
-        // } else if (message.content.startsWith('!enable')) {
-        //     message.guild?.channels.cache.forEach(channel => {
-        //         // if(channel.type !== "text" || !channel.parentID || channel.parentID !== '710742381409861643') return;
-        //         // if(channel.id !== '710742381409861645') return;
-        //         if ((channel.type !== 'category' || channel.id !== '710742381409861643') && channel.id !== '710742381409861645' && channel.id !== '753468247948656671') return;
-        //         channel.updateOverwrite('749869767527104513', { SEND_MESSAGES: null }, 'Enabling message send abilities for school people');
-        //     });
         }
-        // } else if (message.content.startsWith('!pol2')) {
-        //     const pollsChannel = await client.channels.cache.get('749870145962508349');
-        //     if(!pollsChannel) return;
-        //     let args = message.content.split("=");
-        //     if(args.length < 3) {
-        //         message.reply("The syntax for this command is `!poll=<possible-reactions-seperated-by-commas>=<text>`\nExample:\n `!poll=👍,👎=Is MSG Bot awesome?` ");
-        //         return;
-        //     }
-        //     args.shift();
-        //     let reactions = args.shift()?.split(",");
-        //     let polltext = args.join("=");
-        //     const messageToSend = new MessageEmbed()
-        //     .setColor('#caed05')
-        //     .setTitle(`Poll by ${message.member?.displayName}:`)
-        //     .setDescription(polltext);
-        //     console.log("Adding poll: " + polltext);
-        //     //@ts-ignore
-        //     pollsChannel.send(messageToSend).then(sentMessage => {
-        //         reactions?.forEach(reaction => {
-        //             sentMessage.react(reaction.trim());
-        //         })
-        //     });
-        //     message.delete();
-        // }
     });
-    // var colors = ['750606609574658058', '750606768354361356', '750606770497519647', '750606837455388713', '750606866165399565'];
-    // setInterval(async () => {
-    //     [... (await mainGuild?.roles.cache.get('750606553177915443')?.members.array() || [])].forEach(member => {
-    //         colors.forEach(color => member.roles.remove(color));
-    //         member.roles.add(colors[Math.floor(Math.random() * colors.length)]);
-    //     });
-    // }, 1200000);
+
     
     let currentNumOfPostsMSG: number;
     let currentNumOfPostsAsia: number;
@@ -248,6 +171,16 @@ try{
         get('https://public-api.wordpress.com/rest/v1.1/sites/asiawritescreatively.wordpress.com/posts?offset=0&number=1', async res => {currentNumOfPostsAsia = await handleBlog(res, currentNumOfPostsAsia, "Rhino Riders Ramblings")})
             .on('err', (err) => console.error("Error getting wordpress for MSG: " + err));
     }, 5000);
+    setInterval(() => {
+        get('https://www.biblegateway.com/votd/get/?format=json&version=esv', async res => {
+            let data = '';
+            res.on('data', (d) => {data += d});
+            res.on('end', async () => {
+                const json = JSON.parse(data);
+                const verse = json.votd.text
+            })
+        });
+    }, 60000)
     
     const token = JSON.parse(readFileSync('./config.json').toString('utf-8')).token;
     client.login(token);
@@ -282,36 +215,16 @@ function handleBlog(res, count, siteName): Promise<number> {
                 if(!count) {
                     count = data.found;
     
-    //                 let desc: string = data.posts[0].excerpt;
-    //                 desc = desc.replace("<p>", "");
-    //                 desc = desc.replace("</p>", "");
-    //                 desc = desc.replace(/\[&hellip;\]/g, "");
-    //                 desc = decodeURIComponent(desc);
-    
-    //                 const embed = new MessageEmbed()
-    //                     .setTitle(siteName + " post: " + data.posts[0].title)
-    //                     .setAuthor(data.posts[0].author.name, data.posts[0].author.avatar_URL)
-    //                     .setDescription(desc)
-    //                     .setTimestamp(new Date(data.posts[0].date))
-    //                     .setColor('#0000aa')
-    //                     .setFooter(data.posts[0].URL)
-    //                     .setImage(data.posts[0].featured_image)
-    // //                              http://familystudents.family.blog/2020/11/05/vergesssen/
-    //                     .setFooter("Automatically detected by a bot. Please report any issues")
-    //                     .setURL(data.posts[0].URL);
-    //                 (<TextChannel> await client.channels.cache.get(blogId)?.fetch()).send(embed);
-    //                 console.log("2 " + count);
-    
                     resolve(count);
                     return;
                 }
                 if(data.found > count) {
     
                     let desc: string = data.posts[0].excerpt;
-                    desc = desc.replace("<p>", "");
-                    desc = desc.replace("</p>", "");
-                    desc = desc.replace(/\[&hellip;\]/g, "");
-                    desc = decodeURIComponent(desc);
+                    desc = desc.replace("<p>", "").replace("</p>", "").replace(/\[&\w+;\]/g, "").replace("\n", "");
+                    // desc = decodeURIComponent(desc);
+                    desc = decodeEntities(desc).trim() + "...";
+                    
     
                     const embed = new MessageEmbed()
                         .setTitle(siteName + " post: " + data.posts[0].title)
@@ -334,5 +247,21 @@ function handleBlog(res, count, siteName): Promise<number> {
             // console.log("3 " + count);
             // return count;
             // ).on('err', (err) => console.error("Error getting wordpress: " + err));
+    });
+}
+function decodeEntities(encodedString) {
+    var translate_re = /&(nbsp|amp|quot|lt|gt);/g;
+    var translate = {
+        "nbsp":" ",
+        "amp" : "&",
+        "quot": "\"",
+        "lt"  : "<",
+        "gt"  : ">"
+    };
+    return encodedString.replace(translate_re, function(match, entity) {
+        return translate[entity];
+    }).replace(/&#(\d+);/gi, function(match, numStr) {
+        var num = parseInt(numStr, 10);
+        return String.fromCharCode(num);
     });
 }
