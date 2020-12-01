@@ -1,7 +1,6 @@
 import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild } from 'discord.js'; 
 import { get } from 'https';
 import { readFileSync } from 'fs';
-import _ from 'underscore';
 
 const blogId = '767695352144461825';
 
