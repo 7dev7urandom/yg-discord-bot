@@ -1,14 +1,14 @@
 import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild } from 'discord.js'; 
 import { get } from 'https';
 import { readFileSync } from 'fs';
-const blogId = '782855962297761815';
+const blogId = '767695352144461825';
 
 const client = new Client();
 try{
 
     client.once('ready', async () => {
         console.log("Client ready!");
-        mainGuild = client.guilds.cache.get('782855962297761812'); // Youth Group
+        mainGuild = client.guilds.cache.get('762299189290991616'); // Youth Group
         // client.user?.setPresence({
         //     status: "online",
         //     activity: {
@@ -16,7 +16,7 @@ try{
         //         name: "for !aaa"
         //     }
         // });
-        const x = mainGuild?.channels.resolve('782855962297761815');
+        const x = mainGuild?.channels.resolve('782854127520579607');
         if (x) (<TextChannel> await x.fetch()).send("YG bot loaded");
     });
     var messageJson: any = {};
@@ -248,134 +248,6 @@ try{
         get('https://public-api.wordpress.com/rest/v1.1/sites/asiawritescreatively.wordpress.com/posts?offset=0&number=1', async res => {currentNumOfPostsAsia = await handleBlog(res, currentNumOfPostsAsia, "Rhino Riders Ramblings")})
             .on('err', (err) => console.error("Error getting wordpress for MSG: " + err));
     }, 5000);
-    //     get('https://public-api.wordpress.com/rest/v1.1/sites/familystudents.family.blog/posts?offset=0&number=1', res => {
-    //         let datastr = '';
-    
-    //         res.on('data', chunk => datastr += chunk);
-    
-    //         res.on('end', async () => {
-    //             let data = JSON.parse(datastr);
-    //             if(!currentNumOfPostsMSG) {
-    //                 currentNumOfPostsMSG = data.found;
-    
-    // //                 let desc: string = data.posts[0].excerpt;
-    // //                 desc = desc.replace("<p>", "");
-    // //                 desc = desc.replace("</p>", "");
-    // //                 desc = desc.replace("[&hellip;]", "");
-    
-    // //                 const embed = new MessageEmbed()
-    // //                     .setTitle("New post: " + data.posts[0].title)
-    // //                     .setAuthor(data.posts[0].author.name, data.posts[0].author.avatar_URL)
-    // //                     .setDescription(desc)
-    // //                     .setTimestamp(new Date(data.posts[0].date))
-    // //                     .setColor('#0000aa')
-    // //                     .setURL(data.posts[0].URL)
-    // //                     .setImage(data.posts[0].featured_image)
-    // // //                              http://familystudents.family.blog/2020/11/05/vergesssen/
-    // //                     .setFooter("Automatically detected by a bot. Please report any issues");
-    
-    // //                 (<TextChannel> await client.channels.cache.get(blogId)?.fetch()).send(embed);
-    //                 return;
-    //             }
-    //             if(data.found > currentNumOfPostsMSG) {
-    
-    //                 let desc: string = data.posts[0].excerpt;
-    //                 desc = desc.replace("<p>", "");
-    //                 desc = desc.replace("</p>", "");
-    //                 desc = desc.replace("[&hellip;]", "");
-    //                 desc = decodeURIComponent(desc);
-    
-    //                 const embed = new MessageEmbed()
-    //                     .setTitle("New post: " + data.posts[0].title)
-    //                     .setAuthor(data.posts[0].author.name, data.posts[0].author.avatar_URL)
-    //                     .setDescription(desc)
-    //                     .setTimestamp(new Date(data.posts[0].date))
-    //                     .setColor('#0000aa')
-    //                     .setFooter(data.posts[0].URL)
-    //                     .setImage(data.posts[0].featured_image)
-    // //                              http://familystudents.family.blog/2020/11/05/vergesssen/
-    //                     .setFooter("Automatically detected by a bot. Please report any issues")
-    //                     .setURL(data.posts[0].URL);
-    //                 (<TextChannel> await client.channels.cache.get(blogId)?.fetch()).send(embed);
-    //                 currentNumOfPostsMSG = data.found;
-    //             }
-    //         });
-    //     }).on('err', (err) => console.error("Error getting wordpress: " + err));
-    // }, 5000);
-    // setInterval(() => {
-    //     get('https://public-api.wordpress.com/rest/v1.1/sites/asiawritescreatively.wordpress.com/posts?offset=0&number=1', res => {
-    //         let datastr = '';
-    
-    //         res.on('data', chunk => datastr += chunk);
-    
-    //         res.on('end', async () => {
-    //             let data = JSON.parse(datastr);
-    //             if(!currentNumOfPostsAsia) {
-    //                 currentNumOfPostsAsia = data.found;
-    
-    // //                 let desc: string = data.posts[0].excerpt;
-    // //                 desc = desc.replace("<p>", "");
-    // //                 desc = desc.replace("</p>", "");
-    // //                 desc = desc.replace("[&hellip;]", "");
-    
-    // //                 const embed = new MessageEmbed()
-    // //                     .setTitle("New post: " + data.posts[0].title)
-    // //                     .setAuthor(data.posts[0].author.name, data.posts[0].author.avatar_URL)
-    // //                     .setDescription(desc)
-    // //                     .setTimestamp(new Date(data.posts[0].date))
-    // //                     .setColor('#0000aa')
-    // //                     .setURL(data.posts[0].URL)
-    // //                     .setImage(data.posts[0].featured_image)
-    // // //                              http://familystudents.family.blog/2020/11/05/vergesssen/
-    // //                     .setFooter("Automatically detected by a bot. Please report any issues");
-    
-    // //                 (<TextChannel> await client.channels.cache.get(blogId)?.fetch()).send(embed);
-    //                 return;
-    //             }
-    //             if(data.found > currentNumOfPostsAsia) {
-    
-    //                 let desc: string = data.posts[0].excerpt;
-    //                 desc = desc.replace("<p>", "");
-    //                 desc = desc.replace("</p>", "");
-    //                 desc = desc.replace("[&hellip;]", "");
-    //                 // desc = desc.replace("&nbsp;", "");
-    //                 desc = decodeURIComponent(desc);
-    
-    //                 const embed = new MessageEmbed()
-    //                     .setTitle("New post: " + data.posts[0].title)
-    //                     .setAuthor(data.posts[0].author.name, data.posts[0].author.avatar_URL)
-    //                     .setDescription(desc)
-    //                     .setTimestamp(new Date(data.posts[0].date))
-    //                     .setColor('#0000aa')
-    //                     .setFooter(data.posts[0].URL)
-    //                     .setImage(data.posts[0].featured_image)
-    // //                              http://familystudents.family.blog/2020/11/05/vergesssen/
-    //                     .setFooter("Automatically detected by a bot. Please report any issues")
-    //                     .setURL(data.posts[0].URL);
-    //                 (<TextChannel> await client.channels.cache.get(blogId)?.fetch()).send(embed);
-    //                 currentNumOfPostsAsia = data.found;
-    //             }
-    //         });
-    //     }).on('err', (err) => console.error("Error getting wordpress: " + err));
-    // }, 5000);
-    
-    // client.on('messageReactionAdd', (reaction, user) => {
-    //     if(reaction.message.guild === mainGuild) return;
-    
-    // });
-    // client.on('messageDelete', async message => {
-    //     if(message.guild === mainGuild) return;
-    
-    //     const channel: TextChannel = <TextChannel> await client.channels.fetch('751349307382431845');
-    //     const logMessage = new MessageEmbed()
-    //         .setTitle("Message deleted in #" + (<TextChannel>message.channel).name)
-    //         .setAuthor(message.author?.username + '#' + message.author?.discriminator, message.author?.avatarURL() || undefined)
-    //         .setDescription(message.content)
-    //         .setTimestamp(new Date())
-    //         .setColor('#de6053')
-    //         .setFooter("ID: " + message.id);
-    //     channel.send(logMessage);
-    // });
     
     const token = JSON.parse(readFileSync('./config.json').toString('utf-8')).token;
     client.login(token);
