@@ -157,6 +157,10 @@ try{
                 return;
             }
             message.reply("Missing parameter. Syntax: `!purge <<numberOfMessages>|<username>|all> [numberOfMessages]`");
+        } else if (message.content.startsWith("!endit")) {
+            message.channel.send(new MessageEmbed().setAuthor("Clem")
+                .setDescription("End of convo")
+                .setThumbnail('https://cdn.discordapp.com/avatars/708155649455816785/a803bf4737f4dec2ada1e6b0517e3b61.webp'));
         }
     });
 
