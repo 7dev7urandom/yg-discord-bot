@@ -21,6 +21,11 @@ try{
     
     client.on("message", async message => {
         // console.log("message: " + message.content);
+
+        if(message.channel.type == 'dm') {
+            message.channel.send("Stop bullying me");
+        }
+
         if(!(message.guild === mainGuild)) return;
         if(message.content.startsWith("!export")) {
             if (message.member?.roles.cache.has('762592153393692682')) {
