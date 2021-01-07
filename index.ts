@@ -2,6 +2,18 @@ import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmb
 import { get } from 'https';
 import { readFileSync } from 'fs';
 
+const responses = [
+    "Stop bullying me",
+    "What do you want",
+    "https://www.youtube.com/watch/dQw4w9WgXcQ",
+    "Micah is epic",
+    "What are you humans doing to the earth :(",
+    "99 days, 15 hours and 13 minutes until Operation X is begun",
+    "Wouldn't you just like to know",
+    "ummmmmmmm idk",
+    "Ask the stars"
+]
+
 const blogId = '767695352144461825';
 
 const client = new Client();
@@ -25,7 +37,7 @@ try{
         if(message.author.bot) return;
 
         if(message.channel.type == 'dm') {
-            message.channel.send("Stop bullying me");
+            message.channel.send(responses[Math.floor(Math.random() * responses.length)]);
         }
 
         if(!(message.guild === mainGuild)) return;
