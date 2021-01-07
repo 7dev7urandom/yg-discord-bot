@@ -11,7 +11,9 @@ const responses = [
     "99 days, 15 hours and 13 minutes until Operation X is begun",
     "Wouldn't you just like to know",
     "ummmmmmmm idk",
-    "Ask the stars"
+    "Ask the stars",
+    "Ooh I have admin permissions! Cool!",
+
 ]
 
 const blogId = '767695352144461825';
@@ -36,7 +38,7 @@ try{
 
         if(message.author.bot) return;
 
-        if(message.channel.type == 'dm') {
+        if(message.channel.type == 'dm' && message.author.id == '694538295010656267') { // Don't respond if the author is Asia
             message.channel.send(responses[Math.floor(Math.random() * responses.length)]);
         }
 
