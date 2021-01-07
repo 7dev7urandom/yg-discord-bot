@@ -172,7 +172,7 @@ try{
         get('https://public-api.wordpress.com/rest/v1.1/sites/familystudents.family.blog/posts?offset=0&number=1', async res => {currentNumOfPostsMSG = await handleBlog(res, currentNumOfPostsMSG, "MSG students")})
             .on('err', (err) => console.error("Error getting wordpress for MSG: " + err));
         get('https://public-api.wordpress.com/rest/v1.1/sites/asiawritescreatively.wordpress.com/posts?offset=0&number=1', async res => {currentNumOfPostsAsia = await handleBlog(res, currentNumOfPostsAsia, "Rhino Riders Ramblings")})
-            .on('err', (err) => console.error("Error getting wordpress for MSG: " + err));
+            .on('err', (err) => console.error("Error getting wordpress for RhinoRidersRamblings: " + err));
     }, 5000);
     setInterval(() => {
         get('https://www.biblegateway.com/votd/get/?format=json&version=esv', async res => {
@@ -230,7 +230,7 @@ function handleBlog(res, count, siteName): Promise<number> {
                     
     
                     const embed = new MessageEmbed()
-                        .setTitle(siteName + " post: " + data.posts[0].title)
+                        .setTitle(siteName + " post: " + decodeEntities(data.posts[0].title))
                         .setAuthor(data.posts[0].author.name, data.posts[0].author.avatar_URL)
                         .setDescription(desc)
                         .setTimestamp(new Date(data.posts[0].date))
