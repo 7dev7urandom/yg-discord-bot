@@ -22,6 +22,8 @@ try{
     client.on("message", async message => {
         // console.log("message: " + message.content);
 
+        if(message.author.bot) return;
+
         if(message.channel.type == 'dm') {
             message.channel.send("Stop bullying me");
         }
