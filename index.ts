@@ -160,6 +160,7 @@ try{
         } else if (message.content.startsWith("!endit")) {
             message.channel.send(new MessageEmbed().setAuthor("Clem", 'https://cdn.discordapp.com/avatars/708155649455816785/a803bf4737f4dec2ada1e6b0517e3b61.webp')
                 .setDescription("End of convo"));
+            message.delete();
         }
     });
 
