@@ -38,7 +38,7 @@ try{
 
         if(message.author.bot) return;
 
-        if(message.channel.type == 'dm' && message.author.id == '694538295010656267') { // Don't respond if the author is Asia
+        if(message.channel.type == 'dm' && message.author.id !== '694538295010656267') { // Don't respond if the author is Asia
             message.channel.send(responses[Math.floor(Math.random() * responses.length)]);
         }
 
