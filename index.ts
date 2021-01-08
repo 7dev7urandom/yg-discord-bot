@@ -90,6 +90,8 @@ try{
                     if (err) throw err;
                 });
                 responses.splice(index, 1);
+            } else {
+                message.channel.send(message.content.split(' ')[0] + " is not a valid command. Valid commands are: !responses, !addres, and !remres");
             }
             return;
         }
