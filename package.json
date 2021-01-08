@@ -10,6 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "@types/npm": "^2.0.31",
-    "discord.js": "^12.5.1"
+    "@types/sqlite3": "^3.1.6",
+    "@types/underscore": "^1.10.24",
+    "discord.js": "^12.5.1",
+    "sqlite3": "^5.0.0"
   }
 }
