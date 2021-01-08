@@ -1,20 +1,42 @@
 import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild } from 'discord.js'; 
 import { get } from 'https';
 import { readFileSync } from 'fs';
+import { Database } from 'sqlite3';
 
-const responses = [
-    "Stop bullying me",
-    "What do you want",
-    "https://www.youtube.com/watch/dQw4w9WgXcQ",
-    "Micah is epic",
-    "What are you humans doing to the earth :(",
-    "99 days, 15 hours and 13 minutes until Operation X is begun",
-    "Wouldn't you just like to know",
-    "ummmmmmmm idk",
-    "Ask the stars",
-    "Ooh I have admin permissions! Cool!",
+let responses = [
+    "Stop bullying me"
+];
 
-]
+const db = new Database('dmresponses.db', (err) => {
+    if (err) throw err;
+    console.log("Got db");
+});
+db.run(`CREATE TABLE IF NOT EXISTS responses (value TEXT PRIMARY KEY)`);
+
+db.serialize(() => {
+    db.all(`SELECT value FROM responses`, [], (err, rows) => {
+        if(err) throw err;
+        responses = rows.map(r => r.value);
+        if(responses.length == 0) {
+            responses = [
+                "Stop bullying me",
+                "What do you want",
+                "https://www.youtube.com/watch/dQw4w9WgXcQ",
+                "Micah is epic",
+                "What are you humans doing to the earth :(",
+                "99 days, 15 hours and 13 minutes until Operation X is begun",
+                "Wouldn't you just like to know",
+                "ummmmmmmm idk",
+                "Ask the stars",
+                "Ooh I have admin permissions! Cool!",
+            ];
+            
+            db.run(`INSERT INTO responses (value) VALUES ${responses.map(_ => '(?)').join(',')}`, responses, err => {
+                if(err) throw err;
+            });
+        }
+    });
+});
 
 const blogId = '767695352144461825';
 
@@ -38,6 +60,39 @@ try{
 
         if(message.author.bot) return;
 
+        if(message.channel.type == 'dm' && (message.author.id === '694538295010656267' || message.author.id === '494009206341369857' ) && message.content.startsWith('!')) {
+            if(message.content.startsWith("!responses")) {
+                const desc = [];
+                responses.forEach((value, i) => {
+                    desc.push((i + '').padEnd(5, ' ') + " | " + value);
+                });
+                const embed = new MessageEmbed()
+                .setTitle('Current responses')
+                .setDescription("Index | Text\n" + desc.join('\n'));
+                message.channel.send(embed);
+            } else if (message.content.startsWith("!addres")) {
+                const newResponse = message.content.substring(8);
+                responses.push(newResponse);
+                message.channel.send("Added response \"" + newResponse + "\"");
+                db.run(`INSERT INTO responses (value) VALUES (?)`, [newResponse]);
+            } else if (message.content.startsWith('!remres')) {
+                const index = parseInt(message.content.substring(8));
+                if(!index) message.channel.send("Error: Invalid value " + message.content.substring(8));
+                if(index >= responses.length) {
+                    message.channel.send("Error: Index out of range 0-" + (responses.length - 1));
+                    return;
+                }
+                const embed = new MessageEmbed()
+                .setTitle('Response deleted')
+                .setDescription("Text: " + responses[index]);
+                message.channel.send(embed);
+                db.run(`DELETE FROM responses WHERE value in (SELECT value FROM responses WHERE value=(?) LIMIT 1)`, [responses[index]], function(err) {
+                    if (err) throw err;
+                });
+                responses = responses.splice(index, 1);
+            }
+            return;
+        }
         if(message.channel.type == 'dm' && message.author.id !== '694538295010656267') { // Don't respond if the author is Asia
             message.channel.send(responses[Math.floor(Math.random() * responses.length)]);
         }
