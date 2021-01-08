@@ -89,7 +89,7 @@ try{
                 db.run(`DELETE FROM responses WHERE value in (SELECT value FROM responses WHERE value=(?) LIMIT 1)`, [responses[index]], function(err) {
                     if (err) throw err;
                 });
-                responses = responses.splice(index, 1);
+                responses.splice(index, 1);
             }
             return;
         }
