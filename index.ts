@@ -60,7 +60,7 @@ try{
 
         if(message.author.bot) return;
 
-        if(message.channel.type == 'dm' && (message.author.id === '694538295010656267' || message.author.id === '494009206341369857' || message.author.id === '710763075057483797' ) && message.content.startsWith('!')) {
+        if(message.channel.type == 'dm' && (message.author.id === '694538295010656267' || message.author.id === '494009206341369857' || message.author.id === '710763075057483797' || message.author.id === '489791429410029569') && message.content.startsWith('!')) {
             if(message.content.startsWith("!responses")) {
                 const desc = [];
                 responses.forEach((value, i) => {
