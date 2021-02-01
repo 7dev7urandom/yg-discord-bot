@@ -100,6 +100,10 @@ try{
         }
 
         if(!(message.guild === mainGuild)) return;
+        if(message.content.toLowerCase().includes("the way")) {
+            message.delete();
+            return;
+        }
         if(message.content.startsWith("!export")) {
             if (message.member?.roles.cache.has('762592153393692682')) {
                 message.channel.send(`Message export requested by ${message.member?.displayName}. Messages exporting!`);
