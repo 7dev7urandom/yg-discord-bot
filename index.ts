@@ -100,8 +100,9 @@ try{
         }
 
         if(!(message.guild === mainGuild)) return;
-        if(message.content.toLowerCase().includes("the way")) {
+        if(message.content.toLowerCase().includes("the way") || message.content.toLowerCase() === 'way' || message.content.toLowerCase().includes("wae") || message.content.toLowerCase().includes("waye")) {
             message.delete();
+            message.reply("Nice try you bag of lobster whiskers");
             return;
         }
         if(message.content.startsWith("!export")) {
