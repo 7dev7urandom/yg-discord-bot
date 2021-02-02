@@ -100,7 +100,7 @@ try{
         }
 
         if(!(message.guild === mainGuild)) return;
-        if(message.author.id === '708155649455816785' && (message.content.replace(/[\W_-]/g, '').toLowerCase().includes("theway") || message.content.replace(/[\W_-]/g, '').toLowerCase().includes(":regional_indicator_w::regional_indicator_a::regional_indicator_y:") ||message.content.toLowerCase() === 'way' || message.content.toLowerCase().includes("wae") || message.content.toLowerCase().includes("waye") || message.content.toLowerCase().includes("wai") || message.content.toLowerCase().includes("wë"))) {
+        if(message.author.id === '708155649455816785' && (message.content.replace(/[\W_-]/g, '').toLowerCase().includes("theway") || message.content.replace(/[\W_-]/g, '').toLowerCase().includes(":regional_indicator_w::regional_indicator_a::regional_indicator_y:") ||message.content.toLowerCase() === 'way' || message.content.toLowerCase().includes("wae") || message.content.toLowerCase().includes("waye") || message.content.toLowerCase().includes("wai") || message.content.toLowerCase().includes("wë") || message.content.toLowerCase().includes("wê"))) {
             message.delete();
             message.reply("Nice try you bag of lobster whiskers");
             return;
