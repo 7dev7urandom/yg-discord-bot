@@ -105,11 +105,11 @@ try{
             message.reply("Nice try you bag of lobster whiskers");
             return;
         }
-        if(message.attachments.size === 1 && message.author.id === '708155649455816785') {
-            message.delete();
-            message.reply("nananananana you dingo");
-            return;
-        }
+        // if(message.attachments.size === 1 && message.author.id === '708155649455816785') {
+        //     message.delete();
+        //     message.reply("nananananana you dingo");
+        //     return;
+        // }
         if(message.content.startsWith("!export")) {
             if (message.member?.roles.cache.has('762592153393692682')) {
                 message.channel.send(`Message export requested by ${message.member?.displayName}. Messages exporting!`);
