@@ -258,8 +258,8 @@ try{
                 .setDescription("End of convo"));
             message.delete();
         } else if (message.content.startsWith("!stats")) {
-            message.channel.send(`Do Not Disturb: ${await Promise.all(Array.from((await message.guild.members.fetch()).map(async x => (await x.fetch()).presence.status)))}\n` +
-                                 `Online: ${message.guild.members.cache.size}`)
+            message.channel.send(`Do Not Disturb: ${message.guild.members.cache.filter(x => x.presence.status === 'dnd').size}\n` +
+                                 `Online: ${message.guild.members.cache.filter(x => x.presence.status === 'online').size}`)
         }
     });
 
