@@ -44,7 +44,8 @@ const client = new Client({
     ws: {
         intents: new Intents([
             Intents.NON_PRIVILEGED,
-            "GUILD_MEMBERS"
+            "GUILD_MEMBERS",
+            "GUILD_PRESENCES"
         ])
     }
 });
