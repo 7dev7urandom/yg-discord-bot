@@ -1,4 +1,4 @@
-import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild } from 'discord.js'; 
+import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild, Intents } from 'discord.js'; 
 import { get } from 'https';
 import { readFileSync } from 'fs';
 import { Database } from 'sqlite3';
@@ -40,7 +40,14 @@ db.serialize(() => {
 
 const blogId = '767695352144461825';
 
-const client = new Client();
+const client = new Client({
+    ws: {
+        intents: new Intents([
+            Intents.NON_PRIVILEGED,
+            "GUILD_MEMBERS"
+        ])
+    }
+});
 try{
 
     client.once('ready', async () => {
