@@ -249,6 +249,9 @@ try{
             message.channel.send(new MessageEmbed().setAuthor("Clem", 'https://cdn.discordapp.com/avatars/708155649455816785/a803bf4737f4dec2ada1e6b0517e3b61.webp')
                 .setDescription("End of convo"));
             message.delete();
+        } else if (message.content.startsWith("!stats")) {
+            message.channel.send(`Online: ${message.guild.members.cache.filter(x => x.user.presence.status === 'online').size}\n` +
+                                 `Do Not Disturb: ${message.guild.members.cache.filter(x => x.user.presence.status === 'dnd').size}`)
         }
     });
 
