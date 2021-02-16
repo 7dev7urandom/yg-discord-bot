@@ -257,7 +257,7 @@ try{
                 .setDescription("End of convo"));
             message.delete();
         } else if (message.content.startsWith("!stats")) {
-            message.channel.send(`Do Not Disturb: ${Array.from((await message.guild.members.fetch()).map(x => x.presence.status))}\n` +
+            message.channel.send(`Do Not Disturb: ${await Promise.all(Array.from((await message.guild.members.fetch()).map(async x => (await x.fetch()).presence.status)))}\n` +
                                  `Online: ${message.guild.members.cache.size}`)
         }
     });
