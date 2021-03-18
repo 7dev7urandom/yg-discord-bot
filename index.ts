@@ -289,16 +289,19 @@ try{
         get('https://public-api.wordpress.com/rest/v1.1/sites/asiawritescreatively.wordpress.com/posts?offset=0&number=1', async res => {currentNumOfPostsAsia = await handleBlog(res, currentNumOfPostsAsia, "Rhino Riders Ramblings")})
             .on('err', (err) => console.error("Error getting wordpress for RhinoRidersRamblings: " + err));
     }, 5000);
-    setInterval(() => {
-        get('https://www.biblegateway.com/votd/get/?format=json&version=esv', async res => {
-            let data = '';
-            res.on('data', (d) => {data += d});
-            res.on('end', async () => {
-                const json = JSON.parse(data);
-                const verse = json.votd.text
-            })
-        });
-    }, 60000)
+    // setInterval(() => {
+    //     get('https://www.biblegateway.com/votd/get/?format=json&version=esv', async res => {
+    //         let data = '';
+    //         res.on('data', (d) => {data += d});
+    //         res.on('end', async () => {
+    //             try {
+
+    //                 const json = JSON.parse(data);
+    //                 const verse = json.votd.text
+    //             }
+    //         })
+    //     });
+    // }, 60000)
     
     const token = JSON.parse(readFileSync('./config.json').toString('utf-8')).token;
     client.login(token);
