@@ -41,8 +41,8 @@ db.serialize(() => {
 });
 
 const blogId = '767695352144461825';
-const bibleVerseId = '818673638546997269';
-const bibleVerseAdminId = '818659327262720042';
+const bibleVerseId = '762664099825451039';
+const bibleVerseAdminId = '767737683560366080';
 
 const client = new Client({
     ws: {

@@ -30,7 +30,7 @@ async function getVerse() {
 }
 
 client.once('ready', async () => {
-    const channel = client.channels.cache.get('818659327262720042');
+    const channel = client.channels.cache.get('767737683560366080');
     const thing = await getVerse();
     const embed = new MessageEmbed()
         .setTitle(thing[0])
