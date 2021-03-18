@@ -3,6 +3,8 @@ import { get } from 'https';
 import { readFileSync } from 'fs';
 import { Database } from 'sqlite3';
 
+let bibleVerseChannel;
+
 let responses = [
     "Stop bullying me"
 ];
@@ -39,6 +41,8 @@ db.serialize(() => {
 });
 
 const blogId = '767695352144461825';
+const bibleVerseId = '818673638546997269';
+const bibleVerseAdminId = '818659327262720042';
 
 const client = new Client({
     ws: {
@@ -61,11 +65,22 @@ try{
     var messageJson: any = {};
     var mainGuild: Guild | undefined;
     
-    
-    
+
     client.on("message", async message => {
         // console.log("message: " + message.content);
-
+        if(message.channel.id === bibleVerseAdminId) {
+            const collected = await message.awaitReactions((reaction, user) => {
+                const member = mainGuild.members.cache.get(user.id);
+                return member.hasPermission("ADMINISTRATOR") && reaction.emoji.name === "✅" && !user.bot;
+            }, { max: 1 });
+            if(message.embeds.length) {
+                // Bot message
+                (client.channels.cache.get(bibleVerseId) as TextChannel).send(message.embeds[0]);
+            } else {
+                // Manual override not implemented
+            }
+            return;
+        }
         if(message.author.bot) return;
 
         if(message.channel.type == 'dm' && (message.author.id === '694538295010656267' || message.author.id === '494009206341369857' || message.author.id === '710763075057483797' || message.author.id === '489791429410029569') && message.content.startsWith('!')) {
@@ -340,7 +355,6 @@ function handleBlog(res, count, siteName): Promise<number> {
                         .setFooter("Automatically detected by a bot. Please report any issues")
                         .setURL(data.posts[0].URL);
                     (<TextChannel> await client.channels.cache.get(blogId)?.fetch()).send(embed);
-                    console.log("4 " + count);
                     count = data.found;
                     resolve(count);
                 }
