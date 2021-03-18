@@ -73,6 +73,7 @@ try{
                 const member = mainGuild.members.cache.get(user.id);
                 return member.hasPermission("ADMINISTRATOR") && reaction.emoji.name === "✅" && !user.bot;
             }, { max: 1 });
+            if(!collected.size) return;
             if(message.embeds.length) {
                 // Bot message
                 (client.channels.cache.get(bibleVerseId) as TextChannel).send(message.embeds[0]);
