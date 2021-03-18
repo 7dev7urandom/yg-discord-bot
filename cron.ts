@@ -36,7 +36,8 @@ client.once('ready', async () => {
         .setTitle(thing[0])
         .setDescription(thing[1])
         .setURL('https://esv.org/' + thing[0].replace(/ /g, '+'));
-    (await (channel as TextChannel).send(embed)).react("✅");
+    await (await (channel as TextChannel).send(embed)).react("✅");
+    process.exit();
 });
 promises.readFile('./config.json').then(x => {
     const config = JSON.parse(x.toString('utf-8'));
