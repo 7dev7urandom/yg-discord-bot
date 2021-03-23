@@ -1,4 +1,4 @@
-import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild, Intents } from 'discord.js'; 
+import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild, Intents, User } from 'discord.js'; 
 import { get } from 'https';
 import { readFileSync } from 'fs';
 import { Database } from 'sqlite3';
@@ -61,10 +61,24 @@ try{
 
         const x = mainGuild?.channels.resolve('782854127520579607');
         if (x) (<TextChannel> await x.fetch()).send("YG bot loaded");
+        logs = <TextChannel> await client.channels.fetch('823825055736922115');
     });
     var messageJson: any = {};
     var mainGuild: Guild | undefined;
+    var logs: TextChannel;
+
+    client.on('messageDelete', async message => {
+        if(message.guild !== mainGuild) return;
     
+        const logMessage = new MessageEmbed()
+            .setTitle("Message deleted in #" + (<TextChannel>message.channel).name)
+            .setAuthor(message.author?.username + '#' + message.author?.discriminator, message.author?.avatarURL())
+            .setDescription(message.content)
+            .setTimestamp(message.createdTimestamp)
+            .setColor('#de6053')
+            .setFooter("ID: " + message.id);
+            logs.send(logMessage);
+    });
 
     client.on("message", async message => {
         // console.log("message: " + message.content);
