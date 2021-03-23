@@ -28,7 +28,7 @@ async function getVerse() {
 	    process.exit(1);
     }
     const element = regexmatcher[1];
-    const [_, book, chapter, verse] = element.match(/(\w+) (\d+):(\d+)/);
+    const [_, book, chapter, verse] = element.match(/((?:\d )?\w+) (\d+):(\d+)/);
     console.log(`Book: ${book} Chapter: ${chapter} Verse: ${verse}`);
     const json = JSON.parse(await getData(`https://api.esv.org/v3/passage/text/?include-headings=false&include-verse-numbers=false&include-footnotes=false&include-short-copyright=false&include-passage-references=false&q=${book.replace(/ /g, '+')}+${chapter}:${verse}`, apiHeaders));
     return [element + " (ESV)", json.passages[0]];
