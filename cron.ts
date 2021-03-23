@@ -16,7 +16,7 @@ async function getData(link: string, headers?: any): Promise<string> {
             let datastr = '';
             res.on('data', chunk => datastr += chunk);
             res.on('end', () => r(datastr));
-        });
+        }).end();
     });
 }
 
@@ -40,6 +40,7 @@ client.once('ready', async () => {
     const embed = new MessageEmbed()
         .setTitle(thing[0])
         .setDescription(thing[1])
+	.setColor([255, 0, 0])
         .setURL('https://esv.org/' + thing[0].replace(/ /g, '+'));
     await (await (channel as TextChannel).send(embed)).react("✅");
     process.exit();
