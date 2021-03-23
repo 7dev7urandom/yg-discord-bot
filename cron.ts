@@ -22,11 +22,16 @@ async function getData(link: string, headers?: any): Promise<string> {
 
 async function getVerse() {
     const res = await getData('https://www.bible.com/verse-of-the-day');
-    const element = res.match(/<p class="usfm fw7 mt0 mb0 gray f7 ttu">(.*?) \(NIV\)<\/p>/)[1];
+    const regexmatcher = res.match(/<p class="usfm fw7 mt0 mb0 gray f7 ttu">(.*?) \([A-Za-z]{3}\)<\/p>/);
+    if(!regexmatcher) {
+	    console.error("Error: regexmatcher is ", regexmatcher);
+	    process.exit(1);
+    }
+    const element = regexmatcher[1];
     const [_, book, chapter, verse] = element.match(/(\w+) (\d+):(\d+)/);
     console.log(`Book: ${book} Chapter: ${chapter} Verse: ${verse}`);
     const json = JSON.parse(await getData(`https://api.esv.org/v3/passage/text/?include-headings=false&include-verse-numbers=false&include-footnotes=false&include-short-copyright=false&include-passage-references=false&q=${book.replace(/ /g, '+')}+${chapter}:${verse}`, apiHeaders));
-    return [element, json.passages[0]];
+    return [element + " (ESV)", json.passages[0]];
 }
 
 client.once('ready', async () => {
