@@ -342,44 +342,44 @@ function handleBlog(res, count, siteName): Promise<number> {
     // console.log("begin " + count);
     return new Promise((resolve, reject) => {
         let datastr = '';
-            res.on('data', chunk => datastr += chunk);
-    
-            res.on('end', async () => {
-                let data = JSON.parse(datastr);
-                if(!count) {
-                    count = data.found;
-    
-                    resolve(count);
-                    return;
-                }
-                if(data.found > count) {
-    
-                    let desc: string = data.posts[0].excerpt;
-                    desc = desc.replace("<p>", "").replace("</p>", "").replace(/\[&\w+;\]/g, "").replace("\n", "");
-                    // desc = decodeURIComponent(desc);
-                    desc = decodeEntities(desc).trim() + "...";
-                    
-    
-                    const embed = new MessageEmbed()
-                        .setTitle(siteName + " post: " + decodeEntities(data.posts[0].title))
-                        .setAuthor(data.posts[0].author.name, data.posts[0].author.avatar_URL)
-                        .setDescription(desc)
-                        .setTimestamp(new Date(data.posts[0].date))
-                        .setColor('#0000aa')
-                        .setFooter(data.posts[0].URL)
-                        .setImage(data.posts[0].featured_image)
-    //                              http://familystudents.family.blog/2020/11/05/vergesssen/
-                        .setFooter("Automatically detected by a bot. Please report any issues")
-                        .setURL(data.posts[0].URL);
-                    (<TextChannel> await client.channels.cache.get(blogId)?.fetch()).send(embed);
-                    count = data.found;
-                    resolve(count);
-                }
-    
-            });
-            // console.log("3 " + count);
-            // return count;
-            // ).on('err', (err) => console.error("Error getting wordpress: " + err));
+        res.on('data', chunk => datastr += chunk);
+
+        res.on('end', async () => {
+            let data = JSON.parse(datastr);
+            if(!count) {
+                count = data.found;
+
+                resolve(count);
+                return;
+            }
+            if(data.found > count) {
+
+                let desc: string = data.posts[0].excerpt;
+                desc = desc.replace("<p>", "").replace("</p>", "").replace(/\[&\w+;\]/g, "").replace("\n", "");
+                // desc = decodeURIComponent(desc);
+                desc = decodeEntities(desc).trim() + "...";
+                
+
+                const embed = new MessageEmbed()
+                    .setTitle(siteName + " post: " + decodeEntities(data.posts[0].title))
+                    .setAuthor(data.posts[0].author.name, data.posts[0].author.avatar_URL)
+                    .setDescription(desc)
+                    .setTimestamp(new Date(data.posts[0].date))
+                    .setColor('#0000aa')
+                    .setFooter(data.posts[0].URL)
+                    .setImage(data.posts[0].featured_image)
+//                              http://familystudents.family.blog/2020/11/05/vergesssen/
+                    .setFooter("Automatically detected by a bot. Please report any issues")
+                    .setURL(data.posts[0].URL);
+                (<TextChannel> await client.channels.cache.get(blogId)?.fetch()).send(embed);
+                count = data.found;
+                resolve(count);
+            }
+
+        });
+        // console.log("3 " + count);
+        // return count;
+        // ).on('err', (err) => console.error("Error getting wordpress: " + err));
     });
 }
 function decodeEntities(encodedString) {
