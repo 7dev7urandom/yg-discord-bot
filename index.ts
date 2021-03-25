@@ -342,7 +342,6 @@ function handleBlog(res, count, siteName): Promise<number> {
     // console.log("begin " + count);
     return new Promise((resolve, reject) => {
         let datastr = '';
-    
             res.on('data', chunk => datastr += chunk);
     
             res.on('end', async () => {
