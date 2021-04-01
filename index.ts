@@ -138,7 +138,7 @@ try{
         }
 
         if(!(message.guild === mainGuild)) return;
-        if(!message.content.includes("qqqq") && new Date().getDate() == 1) {
+        if(!message.content.includes("qqqq") && new Date().getDate() == 1 && !message.member.hasPermission("ADMINISTRATOR")) {
             message.author.send("Your message does not include qqqq");
             message.delete();
             return;
