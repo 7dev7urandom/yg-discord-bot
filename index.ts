@@ -139,7 +139,7 @@ try{
 
         if(!(message.guild === mainGuild)) return;
         if(!message.content.includes("qqqq") && new Date().getDate() == 1) {
-            message.reply("Your message does not include qqqq");
+            message.author.send("Your message does not include qqqq");
             message.delete();
             return;
         }
