@@ -21,27 +21,29 @@ async function getData(link: string, headers?: any): Promise<string> {
 }
 
 async function getVerse() {
-    const res = await getData('https://www.bible.com/verse-of-the-day');
+/*    const res = await getData('https://www.bible.com/verse-of-the-day');
     const regexmatcher = res.match(/<p class="usfm fw7 mt0 mb0 gray f7 ttu">(.*?) \([A-Za-z]{3}\)<\/p>/);
     if(!regexmatcher) {
-	    console.error("Error: regexmatcher is ", regexmatcher);
+	    console.error("Error: regexmatcher is ", regexmatcher, res);
 	    process.exit(1);
     }
     const element = regexmatcher[1];
     const [_, book, chapter, verse] = element.match(/((?:\d )?\w+) (\d+):(\d+)/);
     console.log(`Book: ${book} Chapter: ${chapter} Verse: ${verse}`);
-    const json = JSON.parse(await getData(`https://api.esv.org/v3/passage/text/?include-headings=false&include-verse-numbers=false&include-footnotes=false&include-short-copyright=false&include-passage-references=false&q=${book.replace(/ /g, '+')}+${chapter}:${verse}`, apiHeaders));
-    return [element + " (ESV)", json.passages[0]];
+//    const json = JSON.parse(await getData(`https://api.esv.org/v3/passage/text/?include-headings=false&include-verse-numbers=false&include-footnotes=false&include-short-copyright=false&include-passage-references=false&q=${book.replace(/ /g, '+')}+${chapter}:${verse}`, apiHeaders));
+*/
+    const json = JSON.parse(await getData(`https://www.biblegateway.com/votd/get/?format=json&version=esv`));
+    return json.votd;
 }
 
 client.once('ready', async () => {
     const channel = client.channels.cache.get('767737683560366080');
     const thing = await getVerse();
     const embed = new MessageEmbed()
-        .setTitle(thing[0])
-        .setDescription(thing[1])
+        .setTitle(thing.reference)
+        .setDescription(thing.content)
 	.setColor([255, 0, 0])
-        .setURL('https://esv.org/' + thing[0].replace(/ /g, '+'));
+        .setURL(thing.permalink);
     await (await (channel as TextChannel).send(embed)).react("✅");
     process.exit();
 });
