@@ -40,7 +40,7 @@ client.once('ready', async () => {
     const channel = client.channels.cache.get('767737683560366080');
     const thing = await getVerse();
     const embed = new MessageEmbed()
-        .setTitle(thing.reference)
+        .setTitle(thing.reference + " (ESV)")
         .setDescription(thing.content)
 	.setColor([255, 0, 0])
         .setURL(thing.permalink);
