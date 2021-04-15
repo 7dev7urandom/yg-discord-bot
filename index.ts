@@ -58,7 +58,6 @@ try{
     client.once('ready', async () => {
         console.log("Client ready!");
         mainGuild = client.guilds.cache.get('762299189290991616'); // Youth Group
-
         const x = mainGuild?.channels.resolve('782854127520579607');
         if (x) (<TextChannel> await x.fetch()).send("YG bot loaded");
         logs = <TextChannel> await client.channels.fetch('823825055736922115');
@@ -98,7 +97,7 @@ try{
         }
         if(message.author.bot) return;
 
-        if(message.channel.type == 'dm' && (message.author.id === '694538295010656267' || message.author.id === '494009206341369857' || message.author.id === '710763075057483797' || message.author.id === '489791429410029569') && message.content.startsWith('!')) {
+        if(mainGuild.roles.cache.get('829658046149033985').members.get(message.author.id) && message.channel.type == 'dm' && message.content.startsWith('!')) {
             if(message.content.startsWith("!responses")) {
                 const desc = [];
                 responses.forEach((value, i) => {

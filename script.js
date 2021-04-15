@@ -19,4 +19,3 @@ client.login('NzgyODUwNDM2MDQ2NjUxNDAy.X8SMSA.rXtcvmAprR-4dk_jqrEcRgLtxDU').then
     //     console.log(message.author.username + ": " + message.content);
     // });
 });
-

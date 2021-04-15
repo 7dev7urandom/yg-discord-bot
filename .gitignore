@@ -1,4 +1,5 @@
-config.json
+*.json
 node_modules/
 *.js
 script.js
+dmresponses.db
