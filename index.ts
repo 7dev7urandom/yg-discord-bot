@@ -136,7 +136,7 @@ try{
             message.channel.send(responses[Math.floor(Math.random() * responses.length)]);
         }
 
-        if(!(message.guild === mainGuild)) return;
+        // if(!(message.guild === mainGuild )) return;
         if(message.content.startsWith("!export")) {
             if (message.member?.roles.cache.has('762592153393692682')) {
                 message.channel.send(`Message export requested by ${message.member?.displayName}. Messages exporting!`);
@@ -231,7 +231,18 @@ try{
             } else {
                 message.reply("Sorry, only Administrators can use this feature.")
             }
-
+        } else if (message.content.startsWith("!suggestnick ")) {
+            const nick = message.content.replace("!suggestnick ", "");
+            const embed = new MessageEmbed()
+                .setAuthor(message.member.displayName, message.author.avatarURL())
+                .setDescription("**" + nick + "**\n\nReact with :ballot_box_with_check: to vote. 7 votes required to change")
+                .setTitle("Nickname suggestion");
+            const msg = await message.channel.send(embed);
+            await msg.react("☑️");
+            // const fjdsk = 0;
+            await msg.awaitReactions(reaction => reaction.emoji.name === "☑️", { max: 6 });
+            msg.channel.send("Changing nickname!");
+            msg.member.setNickname(nick);
         } else if (message.content.startsWith('!purge')) {
             if(!message.member?.hasPermission('MANAGE_MESSAGES')) {
                 message.reply("You do not have permission to do that!");
