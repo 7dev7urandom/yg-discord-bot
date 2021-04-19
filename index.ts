@@ -241,7 +241,7 @@ try{
             await msg.react("☑️");
             // const fjdsk = 0;
             await msg.awaitReactions(reaction => reaction.emoji.name === "☑️", { max: 6 });
-            msg.channel.send("Changing nickname!");
+		    msg.channel.send(`Changing nickname to ${nick}!`);
             msg.member.setNickname(nick);
         } else if (message.content.startsWith('!purge')) {
             if(!message.member?.hasPermission('MANAGE_MESSAGES')) {
