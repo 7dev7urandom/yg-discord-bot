@@ -289,7 +289,8 @@ try{
             message.delete();
         } else if (message.content.startsWith("!stats")) {
             message.channel.send(`Do Not Disturb: ${message.guild.members.cache.filter(x => x.presence.status === 'dnd').size}\n` +
-                                 `Online: ${message.guild.members.cache.filter(x => x.presence.status === 'online').size - 1}`)
+                                 `Online: ${message.guild.members.cache.filter(x => x.presence.status === 'online').size - 1}` + 
+                                 `Idle: ${message.guild.members.cache.filter(x => x.presence.status === 'idle').size}`);
         }
     });
 
