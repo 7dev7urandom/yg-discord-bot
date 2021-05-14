@@ -240,7 +240,13 @@ try{
             const msg = await message.channel.send(embed);
             await msg.react("☑️");
             // const fjdsk = 0;
-            await msg.awaitReactions(reaction => reaction.emoji.name === "☑️", { max: 6 });
+            const reacted = new Set<>();
+            await msg.awaitReactions((reaction, user) => {
+                if(reaction.emoji.name !== "☑️") return false;
+                if(reacted.has(user.id)) return false;
+                reacted.add(user.id);
+                return true;
+            }, { max: 6 });
 		    msg.channel.send(`Changing nickname to ${nick}!`);
             msg.member.setNickname(nick);
         } else if (message.content.startsWith('!purge')) {
