@@ -240,7 +240,7 @@ try{
             const msg = await message.channel.send(embed);
             await msg.react("☑️");
             // const fjdsk = 0;
-            const reacted = new Set<>();
+            const reacted = new Set<any>();
             await msg.awaitReactions((reaction, user) => {
                 if(reaction.emoji.name !== "☑️") return false;
                 if(reacted.has(user.id)) return false;
