@@ -75,7 +75,8 @@ try{
             .setDescription(message.content)
             .setTimestamp(message.createdTimestamp)
             .setColor('#de6053')
-            .setFooter("ID: " + message.id);
+            .setFooter("ID: " + message.id)
+            .attachFiles(Array.from(message.attachments.values()));
             logs.send(logMessage);
     });
 
