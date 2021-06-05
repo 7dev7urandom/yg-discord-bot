@@ -41,7 +41,7 @@ client.once('ready', async () => {
     const thing = await getVerse();
     const embed = new MessageEmbed()
         .setTitle(thing.reference.replace(/,.*/, '') + " (ESV)")
-        .setDescription((thing.content as string).replace(/<h3>.*<\/h3>/g, '').replace(/&.*?;/g, "").trim())
+        .setDescription((thing.content as string).replace(/<h3>.*<\/h3>/g, '').replace(/&.*?;/g, "").replace(/<span class="small-caps" >Lord<\/span>/g, "Lord").trim())
 	.setColor([255, 0, 0])
         .setURL(thing.permalink.replace(/,.*/, '') + "&version=ESV");
     await (await (channel as TextChannel).send(embed)).react("✅");
