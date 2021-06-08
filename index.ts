@@ -297,7 +297,9 @@ try{
                 }
                 const channel = message.channel;
                 let messages;
-                while((await channel.messages.fetch()).array().length > 0) {
+                // while((await channel.messages.fetch()).array().length > 0) {
+                await channel.messages.fetch();
+                while((await channel.messages.cache).size > 0) {
                     await (<TextChannel> channel).bulkDelete(100);
                 }
                 message.reply("All messages have been purged!");
