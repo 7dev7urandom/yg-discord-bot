@@ -2,13 +2,13 @@ import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmb
 import { get } from 'https';
 import { readFileSync } from 'fs';
 import { Database } from 'sqlite3';
-import { Expression } from './expression';
+import { ActionExpression, BooleanExpression } from './expression';
 
 let responses = [
     "Stop bullying me"
 ];
 
-let expressions: Map<Expression, string> = new Map();
+let expressions: Map<BooleanExpression, ActionExpression> = new Map();
 
 const db = new Database('dmresponses.db', (err) => {
     if (err) throw err;
@@ -17,6 +17,7 @@ const db = new Database('dmresponses.db', (err) => {
 db.run(`CREATE TABLE IF NOT EXISTS responses (value TEXT PRIMARY KEY)`);
 // db.run(`DROP TABLE triggers`);
 db.run(`CREATE TABLE IF NOT EXISTS triggers (id INT PRIMARY KEY, expression TEXT, response TEXT)`);
+db.run(`DELETE FROM triggers`);
 
 db.serialize(() => {
     db.all(`SELECT value FROM responses`, [], (err, rows) => {
@@ -43,7 +44,7 @@ db.serialize(() => {
     });
     db.all(`SELECT * FROM triggers`, [], (err, rows) => {
         if(err) throw err;
-        expressions = new Map(rows.map(r => [new Expression(r.expression), r.response]));
+        expressions = new Map(rows.map(r => [new BooleanExpression(r.expression), new ActionExpression(r.response)]));
     });
 });
 
@@ -139,13 +140,13 @@ try{
                 const expr = message.content.substring("!addtrigger ".length);
                 let func;
                 try {
-                    func = new Expression(expr);
+                    func = new BooleanExpression(expr);
                     func.checkMatches("test");
                 } catch (e) {
                     message.channel.send("There was an error with that expression: " + e);
                     return;
                 }
-                message.channel.send("What should I say?");
+                message.channel.send("What should I do?");
                 let responseMessage;
                 try {
                     responseMessage = await message.channel.awaitMessages((m) => {
@@ -157,7 +158,15 @@ try{
                     return;
                 }
                 const text = responseMessage.get(responseMessage.firstKey());
-                expressions.set(func, text.content);
+                let resultFunc: ActionExpression;
+                try {
+                    resultFunc = new ActionExpression(text.content);
+                    resultFunc.testExecute();
+                } catch (e) {
+                    message.channel.send("There was an error with that expression: " + e);
+                    return;
+                }
+                expressions.set(func, resultFunc);
                 db.run(`INSERT INTO triggers (expression, response) VALUES (?, ?)`, [expr, text.content], (err) => {
                     if(err) throw err;
                 });
@@ -335,9 +344,8 @@ try{
                                  `Idle: ${message.guild.members.cache.filter(x => x.presence.status === 'idle').size}`);
         }
         if(!message.content.startsWith('!')) {
-            console.log(Array.from(expressions.keys()).map(x => x.expression.toString()));
             expressions.forEach((res, key) => {
-                if(key.checkMatches(message.content)) message.channel.send(res);
+                if(key.checkMatches(message.content)) res.execute(message);
             });
         }
     });
