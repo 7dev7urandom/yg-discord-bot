@@ -17,7 +17,6 @@ const db = new Database('dmresponses.db', (err) => {
 db.run(`CREATE TABLE IF NOT EXISTS responses (value TEXT PRIMARY KEY)`);
 // db.run(`DROP TABLE triggers`);
 db.run(`CREATE TABLE IF NOT EXISTS triggers (id INT PRIMARY KEY, expression TEXT, response TEXT)`);
-db.run(`DELETE FROM triggers`);
 
 db.serialize(() => {
     db.all(`SELECT value FROM responses`, [], (err, rows) => {
