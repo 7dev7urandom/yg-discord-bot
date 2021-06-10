@@ -169,8 +169,23 @@ try{
                 db.run(`INSERT INTO triggers (expression, response) VALUES (?, ?)`, [expr, text.content], (err) => {
                     if(err) throw err;
                 });
+            } else if(message.content.startsWith("!listtrigger")) {
+                db.run(`SELECT * FROM triggers`, (result, error) => {
+                    message.channel.send(new MessageEmbed()
+                        .setDescription(result.rows.map(r => `${r.id} | ${r.expression} | ${r.response}`))
+                        .setTitle("All triggers"));
+                });
+            } else if (message.content.startsWith("!remtrigger")) {
+                const id = parseInt(message.content.substring("!remtrigger ".length));
+                if(isNaN(id)) {
+                    message.channel.send("Not a number: " + id);
+                    return;
+                }
+                db.run(`DELETE FROM triggers WHERE id=(?)`, [id], () => {
+                    message.react("✅");
+                });
             } else {
-                message.channel.send(message.content.split(' ')[0] + " is not a valid command. Valid commands are: !responses, !addres, !remres, and !addtrigger");
+                message.channel.send(message.content.split(' ')[0] + " is not a valid command. Valid commands are: !responses, !addres, !remres, !listtrigger, !remtrigger and !addtrigger");
             }
             return;
         }
