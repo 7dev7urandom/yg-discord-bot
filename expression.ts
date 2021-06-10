@@ -22,12 +22,13 @@ export class BooleanExpression {
 }
 BooleanExpression.funcs = Object.getOwnPropertyNames(BooleanExpression.prototype).filter(name => name !== "constructor" && name !== "checkMatches");
 
+const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor;
 export class ActionExpression {
     expression: CallableFunction;
     static funcs: string[];
 
     constructor(value: string) {
-        this.expression = new Function(...ActionExpression.funcs, value);
+        this.expression = new AsyncFunction(...ActionExpression.funcs, value);
     }
     execute(value: Message) {
         return this.expression(...ActionExpression.funcs.map(x => this[x].call(this, value)));
