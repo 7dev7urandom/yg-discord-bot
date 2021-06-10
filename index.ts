@@ -170,9 +170,10 @@ try{
                     if(err) throw err;
                 });
             } else if(message.content.startsWith("!listtrigger")) {
-                db.run(`SELECT * FROM triggers`, (result, error) => {
+                db.all(`SELECT * FROM triggers`, (err, result) => {
+                    if(err) throw err;
                     message.channel.send(new MessageEmbed()
-                        .setDescription(result.rows.map(r => `${r.id} | ${r.expression} | ${r.response}`))
+                        .setDescription(result.map(r => `${r.id} | ${r.expression} | ${r.response}`))
                         .setTitle("All triggers"));
                 });
             } else if (message.content.startsWith("!remtrigger")) {
