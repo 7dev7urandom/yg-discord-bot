@@ -1,4 +1,4 @@
-import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild, Intents, User } from 'discord.js'; 
+import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild, Intents, User, MessageReaction } from 'discord.js'; 
 import { get } from 'https';
 import { readFileSync } from 'fs';
 import { Database } from 'sqlite3';
@@ -72,7 +72,14 @@ try{
     var messageJson: any = {};
     var mainGuild: Guild | undefined;
     var logs: TextChannel;
-
+    client.on('messageReactionAdd', async (reaction) => {
+        let reactiondone: MessageReaction;
+        if(reaction.emoji.name === 'this1') {
+            reactiondone = await reaction.message.react(reaction.message.guild.emojis.cache.find(e => e.name === 'this'));
+        }
+        await reaction.message.awaitReactions((reaction) => reaction.emoji.name === 'this', {});
+        reactiondone.remove();
+    })
     client.on('messageDelete', async message => {
         if(message.guild !== mainGuild) return;
     
