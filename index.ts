@@ -75,8 +75,8 @@ try{
     client.on('messageReactionAdd', async (reaction) => {
         let reactiondone: MessageReaction;
         if(reaction.emoji.name === 'this1') {
-            reactiondone = await reaction.message.react(reaction.message.guild.emojis.cache.find(e => e.name === 'this'));
             reaction.remove();
+            reactiondone = await reaction.message.react(reaction.message.guild.emojis.cache.find(e => e.name === 'this'));
             await reaction.message.awaitReactions((reaction) => reaction.emoji.name === 'this', { max: 1, time: 10000 });
             reactiondone.users.remove(client.user);
         }
