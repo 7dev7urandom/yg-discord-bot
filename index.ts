@@ -193,6 +193,10 @@ try{
                 db.run(`DELETE FROM triggers WHERE id=(?)`, [id], () => {
                     message.react("✅");
                 });
+                db.all(`SELECT * FROM triggers`, [], (err, rows) => {
+                    if(err) throw err;
+                    expressions = new Map(rows.map(r => [new BooleanExpression(r.expression), new ActionExpression(r.response)]));
+                });
             } else {
                 message.channel.send(message.content.split(' ')[0] + " is not a valid command. Valid commands are: !responses, !addres, !remres, !listtrigger, !remtrigger and !addtrigger");
             }
