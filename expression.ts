@@ -7,17 +7,20 @@ export class BooleanExpression {
     constructor(value: string) {
         this.expression = new Function(...BooleanExpression.funcs, `return ` + value);
     }
-    checkMatches(value: string) {
+    checkMatches(value: Message) {
         return this.expression(...BooleanExpression.funcs.map(x => this[x].call(this, value)));
     }
-    regex(value: string) {
-        return regex => regex.test(value);
+    regex(value: Message) {
+        return regex => regex.content.test(value);
     }
-    contain(value: string) {
-        return test => value.includes(test);
+    contain(value: Message) {
+        return test => value.content.includes(test);
     }
     not() {
         return value => !value;
+    }
+    inChannel(value: Message) {
+        return channelId => value.channel.id === channelId;
     }
 }
 BooleanExpression.funcs = Object.getOwnPropertyNames(BooleanExpression.prototype).filter(name => name !== "constructor" && name !== "checkMatches");

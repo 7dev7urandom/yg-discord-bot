@@ -372,7 +372,7 @@ try{
         }
         if(!message.content.startsWith('!')) {
             expressions.forEach((res, key) => {
-                if(key.checkMatches(message.content)) res.execute(message);
+                if(key.checkMatches(message)) res.execute(message);
             });
         }
     });
