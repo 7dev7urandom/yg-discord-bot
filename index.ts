@@ -148,9 +148,9 @@ try{
                 let func;
                 try {
                     func = new BooleanExpression(expr);
-                    const test = new Message(client, {}, message.channel);
-                    test.content = "test";
-                    func.checkMatches(test);
+                    // const test = new Message(client, {}, message.channel);
+                    // test.content = "test";
+                    func.checkMatches(message);
                 } catch (e) {
                     message.channel.send("There was an error with that expression: " + e);
                     return;
