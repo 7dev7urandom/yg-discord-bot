@@ -11,7 +11,7 @@ export class BooleanExpression {
         return this.expression(...BooleanExpression.funcs.map(x => this[x].call(this, value)));
     }
     regex(value: Message) {
-        return regex => regex.content.test(value);
+        return regex => regex.test(value.content);
     }
     contain(value: Message) {
         return test => value.content.includes(test);
