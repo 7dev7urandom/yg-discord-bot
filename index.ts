@@ -371,8 +371,7 @@ try{
             message.channel.send(`Do Not Disturb: ${message.guild.members.cache.filter(x => x.presence.status === 'dnd').size}\n` +
                                  `Online: ${message.guild.members.cache.filter(x => x.presence.status === 'online').size - 1}\n` + 
                                  `Idle: ${message.guild.members.cache.filter(x => x.presence.status === 'idle').size}`);
-        }
-        if(!message.content.startsWith('!')) {
+        } else {
             expressions.forEach((res, key) => {
                 if(key.checkMatches(message)) res.execute(message);
             });
