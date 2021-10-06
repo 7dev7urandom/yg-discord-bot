@@ -10,6 +10,8 @@ let responses = [
 
 let expressions: Map<BooleanExpression, ActionExpression> = new Map();
 
+let lastStats: number = Date.now();
+
 const db = new Database('dmresponses.db', (err) => {
     if (err) throw err;
     console.log("Got db");
@@ -368,6 +370,8 @@ try{
                 .setDescription("End of convo"));
             message.delete();
         } else if (message.content.startsWith("!stats")) {
+            if(lastStats < Date.now() - 1000 * 30) return;
+            lastStats = Date.now();
             message.channel.send(`Do Not Disturb: ${message.guild.members.cache.filter(x => x.presence.status === 'dnd').size}\n` +
                                  `Online: ${message.guild.members.cache.filter(x => x.presence.status === 'online').size - 1}\n` + 
                                  `Idle: ${message.guild.members.cache.filter(x => x.presence.status === 'idle').size}`);
