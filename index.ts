@@ -370,7 +370,7 @@ try{
                 .setDescription("End of convo"));
             message.delete();
         } else if (message.content.startsWith("!stats")) {
-            if(lastStats < Date.now() - 1000 * 30) return;
+            if(lastStats > Date.now() - 1000 * 30) return;
             lastStats = Date.now();
             message.channel.send(`Do Not Disturb: ${message.guild.members.cache.filter(x => x.presence.status === 'dnd').size}\n` +
                                  `Online: ${message.guild.members.cache.filter(x => x.presence.status === 'online').size - 1}\n` + 
