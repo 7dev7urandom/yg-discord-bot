@@ -2,13 +2,16 @@ import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmb
 import { get } from 'https';
 import { readFileSync } from 'fs';
 import { Database } from 'sqlite3';
-import { ActionExpression, BooleanExpression } from './expression';
+import { ActionExpression, BooleanExpression, PythonActionExpression, PythonBooleanExpression } from './expression';
+
+const botChannelId = '782854127520579607';
 
 let responses = [
     "Stop bullying me"
 ];
 
 let expressions: Map<BooleanExpression, ActionExpression> = new Map();
+let pyExpressions: Map<PythonBooleanExpression, PythonActionExpression> = new Map();
 
 let lastStats: number = Date.now();
 
@@ -19,6 +22,8 @@ const db = new Database('dmresponses.db', (err) => {
 db.run(`CREATE TABLE IF NOT EXISTS responses (value TEXT PRIMARY KEY)`);
 // db.run(`DROP TABLE triggers`);
 db.run(`CREATE TABLE IF NOT EXISTS triggers (id INTEGER PRIMARY KEY AUTOINCREMENT, expression TEXT, response TEXT)`);
+
+db.run(`CREATE TABLE IF NOT EXISTS pytriggers (id INTEGER PRIMARY KEY AUTOINCREMENT, expression TEXT, response TEXT)`);
 
 db.serialize(() => {
     db.all(`SELECT value FROM responses`, [], (err, rows) => {
@@ -46,6 +51,10 @@ db.serialize(() => {
     db.all(`SELECT * FROM triggers`, [], (err, rows) => {
         if(err) throw err;
         expressions = new Map(rows.map(r => [new BooleanExpression(r.expression), new ActionExpression(r.response)]));
+    });
+    db.all(`SELECT * FROM pytriggers`, [], (err, rows) => {
+        if(err) throw err;
+        pyExpressions = new Map(rows.map(r => [new PythonBooleanExpression(r.expression), new PythonActionExpression(r.response)]));
     });
 });
 
@@ -115,7 +124,7 @@ try{
         }
         if(message.author.bot) return;
 
-        if(mainGuild.roles.cache.get('829658046149033985').members.get(message.author.id) && (message.channel.type == 'dm' || message.channel.id === '782854127520579607') && message.content.startsWith('!')) {
+        if(mainGuild.roles.cache.get('829658046149033985').members.get(message.author.id) && (message.channel.type == 'dm' || message.channel.id === botChannelId) && message.content.startsWith('!')) {
             if(message.content.startsWith("!responses")) {
                 const desc = [];
                 responses.forEach((value, i) => {
@@ -147,7 +156,7 @@ try{
                 responses.splice(index, 1);
             } else if (message.content.startsWith("!addtrigger")) {
                 const expr = message.content.substring("!addtrigger ".length);
-                let func;
+                let func: BooleanExpression;
                 try {
                     func = new BooleanExpression(expr);
                     // const test = new Message(client, {}, message.channel);
@@ -201,10 +210,67 @@ try{
                     if(err) throw err;
                     expressions = new Map(rows.map(r => [new BooleanExpression(r.expression), new ActionExpression(r.response)]));
                 });
+            } else if (message.content.startsWith("!addpytrigger")) {
+                const expr = message.content.substring("!addpytrigger ".length);
+                let func: PythonBooleanExpression;
+                try {
+                    func = new PythonBooleanExpression(expr);
+                    // const test = new Message(client, {}, message.channel);
+                    // test.content = "test";
+                    func.execute(message);
+                } catch (e) {
+                    message.channel.send("There was an error with that expression: " + e);
+                    return;
+                }
+                message.channel.send("What should I do?");
+                let responseMessage;
+                try {
+                    responseMessage = await message.channel.awaitMessages((m) => {
+                        // console.log(m, author);
+                        return m.author.id === message.author.id
+                    }, { max: 1, time: 60000, errors: ['time']});
+                } catch {
+                    message.channel.send("Too slow! Canceling");
+                    return;
+                }
+                const text = responseMessage.get(responseMessage.firstKey());
+                let resultFunc: PythonActionExpression;
+                try {
+                    resultFunc = new PythonActionExpression(text.content);
+                    resultFunc.execute(message);
+                } catch (e) {
+                    message.channel.send("There was an error with that expression: " + e);
+                    return;
+                }
+                pyExpressions.set(func, resultFunc);
+                db.run(`INSERT INTO pytriggers (expression, response) VALUES (?, ?)`, [expr, text.content], (err) => {
+                    if(err) throw err;
+                });
+            } else if(message.content.startsWith("!listpytrigger")) {
+                db.all(`SELECT * FROM pytriggers`, (err, result) => {
+                    if(err) throw err;
+                    message.channel.send(new MessageEmbed()
+                        .setDescription(result.map(r => `${r.id} | ${r.expression} | ${r.response}`))
+                        .setTitle("All python triggers"));
+                });
+            } else if (message.content.startsWith("!rempytrigger")) {
+                const id = parseInt(message.content.substring("!rempytrigger ".length));
+                if(isNaN(id)) {
+                    message.channel.send("Not a number: " + id);
+                    return;
+                }
+                db.run(`DELETE FROM pytriggers WHERE id=(?)`, [id], () => {
+                    message.react("✅");
+                });
+                db.all(`SELECT * FROM pytriggers`, [], (err, rows) => {
+                    if(err) throw err;
+                    pyExpressions = new Map(rows.map(r => [new PythonBooleanExpression(r.expression), new PythonActionExpression(r.response)]));
+                });
             } else {
-                message.channel.send(message.content.split(' ')[0] + " is not a valid command. Valid commands are: !responses, !addres, !remres, !listtrigger, !remtrigger and !addtrigger");
+                message.channel.send(message.content.split(' ')[0] + " is not a valid command. Valid commands are: !responses, !addres, !remres, !listtrigger, !remtrigger, !addtrigger, !listpytrigger, !rempytrigger, !addpytrigger");
             }
             return;
+            
         }
         if(message.channel.type == 'dm' && message.author.id !== '694538295010656267') { // Don't respond if the author is Asia
             message.channel.send(responses[Math.floor(Math.random() * responses.length)]);
@@ -378,6 +444,16 @@ try{
         } else {
             expressions.forEach((res, key) => {
                 if(key.checkMatches(message)) res.execute(message);
+            });
+            pyExpressions.forEach((res, key) => {
+                try {
+                    // const x = key.execute(message);
+                    // // console.log(x);
+                    // if(await x) res.execute(message);
+                    key.execute(message).then(x => x ? res.execute(message) : null);
+                } catch (e) {
+                    (message.guild.channels.cache.get(botChannelId) as TextChannel).send("@<494009206341369857> there was an error parsing python expression " + key.expression + ": " + e);
+                }
             });
         }
     });

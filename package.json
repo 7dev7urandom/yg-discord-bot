@@ -13,6 +13,10 @@
     "@types/sqlite3": "^3.1.6",
     "@types/underscore": "^1.10.24",
     "discord.js": "^12.5.1",
+    "pythonia": "^0.2.13",
     "sqlite3": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.6"
   }
 }

@@ -1,4 +1,5 @@
 import { Message, MessageEmbed, MessageEmbedOptions } from "discord.js";
+import { py, python } from 'pythonia';
 
 export class BooleanExpression {
     expression: CallableFunction;
@@ -7,7 +8,7 @@ export class BooleanExpression {
     constructor(value: string) {
         this.expression = new Function(...BooleanExpression.funcs, `return ` + value);
     }
-    checkMatches(value: Message) {
+    async checkMatches(value: Message) {
         return this.expression(...BooleanExpression.funcs.map(x => this[x].call(this, value)));
     }
     regex(value: Message) {
@@ -27,7 +28,7 @@ BooleanExpression.funcs = Object.getOwnPropertyNames(BooleanExpression.prototype
 
 const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor;
 export class ActionExpression {
-    expression: CallableFunction;
+    expression: ((...ActionExpression) => Promise<void>);
     static funcs: string[];
 
     constructor(value: string) {
@@ -56,3 +57,54 @@ export class ActionExpression {
     }
 }
 ActionExpression.funcs = Object.getOwnPropertyNames(ActionExpression.prototype).filter(name => name !== "constructor" && name !== "execute" && name !== "testExecute");
+
+let pyFuncs;
+(async () => {
+    // await console.log(py(`__import__('expression').x()`));
+    // console.log(await python('./expression.py'));
+    // await py('print(3)');
+    pyFuncs = await python('./expression.py');
+    // new PythonActionExpression('x').execute('test' as unknown as Message)
+})();
+
+export class PythonActionExpression {
+    static funcs: string[];
+    expression: string;
+
+    constructor(value: string) {
+        this.expression = value;
+    }
+    async execute(value: Message) {
+        pyFuncs.setMessage(value);
+        const actions: string[] = await pyFuncs.executeBlock(this.expression);
+        for await (const action of actions) {
+            const terms = action.split(' ');
+            if(!PythonActionExpression[terms[0]]) throw new Error(`Unknown action ${terms[0]}`);
+            PythonActionExpression[terms.shift()](value, ...terms);
+        }
+    }
+
+    static print(value: Message, ...args: string[]) {
+        value.channel.send(args.join(' '));
+    }
+    static deleteOriginal(value: Message) {
+        value.delete();
+    }
+    static react(value: Message, reaction: string) {
+        value.react(reaction);
+    }
+}
+
+export class PythonBooleanExpression {
+    static funcs: string[];
+    expression: string;
+
+    constructor(value: string) {
+        this.expression = value;
+    }
+
+    async execute(value: Message) {
+        pyFuncs.setMessage(value);
+        return await pyFuncs.executeExpression(this.expression);
+    }
+}
