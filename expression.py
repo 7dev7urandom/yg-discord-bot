@@ -68,4 +68,6 @@ def deleteOriginal():
     actions.append('deleteOriginal')
 
 def react(emoji):
-    actions.append('react ' + emoji)
+    for e in emoji:
+        if not 0 <= ord(e) <= 127:
+            actions.append('react ' + e)
