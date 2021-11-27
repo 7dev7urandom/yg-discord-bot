@@ -56,10 +56,16 @@ def executeExpression(expr):
 def executeBlock(expr):
     global actions
     actions = []
-    exec(expr, {'__builtins__': {}}, {'message': message, 'print': print })
+    exec(expr, {'__builtins__': {}}, {'message': message, 'print': print, 'deleteOriginal': deleteOriginal, 'react': react})
     return actions
 
 
 # Functions
 def print(message):
     actions.append('print ' + str(message))
+
+def deleteOriginal():
+    actions.append('deleteOriginal')
+
+def react(emoji):
+    actions.append('react ' + emoji)
