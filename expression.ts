@@ -8,7 +8,7 @@ export class BooleanExpression {
     constructor(value: string) {
         this.expression = new Function(...BooleanExpression.funcs, `return ` + value);
     }
-    async checkMatches(value: Message) {
+    checkMatches(value: Message) {
         return this.expression(...BooleanExpression.funcs.map(x => this[x].call(this, value)));
     }
     regex(value: Message) {
