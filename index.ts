@@ -234,23 +234,25 @@ try{
                     return;
                 }
                 const text = responseMessage.get(responseMessage.firstKey());
+                const match = /```(?:py(?:thon)?)?\n([\w\W]*)```/.exec(text.content);
                 let resultFunc: PythonActionExpression;
+                const action = text.content.startsWith('```') ? (match ? match[1] : text.content) : '```py\n' + text.content + '\n```';
                 try {
-                    resultFunc = new PythonActionExpression(text.content);
+                    resultFunc = new PythonActionExpression(action);
                     resultFunc.execute(message);
                 } catch (e) {
                     message.channel.send("There was an error with that expression: " + e);
                     return;
                 }
                 pyExpressions.set(func, resultFunc);
-                db.run(`INSERT INTO pytriggers (expression, response) VALUES (?, ?)`, [expr, text.content], (err) => {
+                db.run(`INSERT INTO pytriggers (expression, response) VALUES (?, ?)`, [expr, action], (err) => {
                     if(err) throw err;
                 });
             } else if(message.content.startsWith("!listpytrigger")) {
                 db.all(`SELECT * FROM pytriggers`, (err, result) => {
                     if(err) throw err;
                     message.channel.send(new MessageEmbed()
-                        .setDescription(result.map(r => `${r.id} | ${r.expression} | ${r.response}`))
+                        .setDescription(result.map(r => `${r.id}: ${r.expression}\`\`\`py\n${r.response}\n\`\`\``))
                         .setTitle("All python triggers"));
                 });
             } else if (message.content.startsWith("!rempytrigger")) {

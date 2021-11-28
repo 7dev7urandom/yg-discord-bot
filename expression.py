@@ -56,9 +56,21 @@ def executeExpression(expr):
 def executeBlock(expr):
     global actions
     actions = []
-    exec(expr, {'__builtins__': {}}, {'message': message, 'print': print, 'deleteOriginal': deleteOriginal, 'react': react})
+    exec(expr, {'__builtins__': { '__import__': __import__, 'int': int, 'str': str }, 'message': message, 'print': print, 'deleteOriginal': deleteOriginal, 'react': react, 'createWaitable': createWaitable})
     return actions
 
+waitables = {}
+
+def executeWaitable(id, message):
+    global actions
+    actions = []
+    if(waitables[id] and waitables[id](message)):
+        return [True, actions]
+    waitables[id] = None
+    return [False, actions]
+
+def waitableTimeout(id):
+    waitables[id] = None
 
 # Functions
 def print(message):
@@ -71,3 +83,6 @@ def react(emoji):
     for e in emoji:
         if not 0 <= ord(e) <= 127:
             actions.append('react ' + e)
+def createWaitable(function):
+    actions.append('createWaitable ' + str(id(function)))
+    waitables[id(function)] = function

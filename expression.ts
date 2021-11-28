@@ -77,13 +77,15 @@ export class PythonActionExpression {
     async execute(value: Message) {
         pyFuncs.setMessage(value);
         const actions: string[] = await pyFuncs.executeBlock(this.expression);
+        await PythonActionExpression.applyActions(value, actions);
+    }
+    static async applyActions(value: Message, actions: string[]) {
         for await (const action of actions) {
             const terms = action.split(' ');
             if(!PythonActionExpression[terms[0]]) throw new Error(`Unknown action ${terms[0]}`);
             PythonActionExpression[terms.shift()](value, ...terms);
         }
     }
-
     static print(value: Message, ...args: string[]) {
         value.channel.send(args.join(' '));
     }
@@ -92,6 +94,24 @@ export class PythonActionExpression {
     }
     static react(value: Message, reaction: string) {
         value.react(reaction);
+    }
+    static async createWaitable(value: Message, functionIdstr: string) {
+        const functionId = parseInt(functionIdstr);
+        // value.channel.awaitMessages(() => {}, )
+        let wait;
+        let res: [boolean, string[]] = [true, []];
+        while(await res[0]) { 
+            try {
+                wait = await value.channel.awaitMessages(m => !m.author.bot, { max: 1, time: 30000, errors: ['time'] });
+                res = (await pyFuncs.executeWaitable(functionId, wait.first()));
+            } catch(e) {
+                console.log(e);
+                value.channel.send("Waitable timeout!");
+                pyFuncs.waitableTimeout(functionId);
+                return;
+            }
+            await PythonActionExpression.applyActions(wait.first(), await res[1]);
+        }
     }
 }
 
