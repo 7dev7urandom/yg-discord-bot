@@ -236,7 +236,7 @@ try{
                 const text = responseMessage.get(responseMessage.firstKey());
                 const match = /```(?:py(?:thon)?)?\n([\w\W]*)```/.exec(text.content);
                 let resultFunc: PythonActionExpression;
-                const action = text.content.startsWith('```') ? (match ? match[1] : text.content) : '```py\n' + text.content + '\n```';
+                const action = text.content.startsWith('```') ? (match ? match[1] : text.content) : text.content;
                 try {
                     resultFunc = new PythonActionExpression(action);
                     resultFunc.execute(message);
