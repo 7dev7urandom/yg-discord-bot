@@ -212,6 +212,10 @@ try{
                 });
             } else if (message.content.startsWith("!addpytrigger")) {
                 const expr = message.content.substring("!addpytrigger ".length);
+                if(expr.length === 0) {
+                    message.channel.send("Give me an actual expression, idiot");
+                    return;
+                }
                 let func: PythonBooleanExpression;
                 try {
                     func = new PythonBooleanExpression(expr);
@@ -234,7 +238,7 @@ try{
                     return;
                 }
                 const text = responseMessage.get(responseMessage.firstKey());
-                const match = /```(?:py(?:thon)?)?\n([\w\W]*)```/.exec(text.content);
+                const match = /```(?:py(?:thon)?)?([\w\W]*)```/.exec(text.content);
                 let resultFunc: PythonActionExpression;
                 const action = text.content.startsWith('```') ? (match ? match[1] : text.content) : text.content;
                 try {
