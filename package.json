@@ -12,7 +12,7 @@
     "@types/npm": "^2.0.31",
     "@types/sqlite3": "^3.1.6",
     "@types/underscore": "^1.10.24",
-    "discord.js": "^12.5.1",
+    "discord.js": "^12.5.3",
     "pythonia": "^0.2.13",
     "sqlite3": "^5.0.0"
   },
