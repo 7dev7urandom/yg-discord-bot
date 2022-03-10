@@ -3,8 +3,12 @@ import { get } from 'https';
 import { readFileSync } from 'fs';
 import { Database } from 'sqlite3';
 import { ActionExpression, BooleanExpression, PythonActionExpression, PythonBooleanExpression } from './expression';
+import { IncomingMessage } from 'http';
 
 const botChannelId = '782854127520579607';
+    
+let currentNumOfPostsMSG: number;
+let currentNumOfPostsAsia: number;
 
 let responses = [
     "Stop bullying me"
@@ -465,9 +469,6 @@ try{
     });
 
     
-    let currentNumOfPostsMSG: number;
-    let currentNumOfPostsAsia: number;
-    
     setInterval(() => {
         get('https://public-api.wordpress.com/rest/v1.1/sites/familystudents.family.blog/posts?offset=0&number=1', async res => {currentNumOfPostsMSG = await handleBlog(res, currentNumOfPostsMSG, "MSG students")})
             .on('err', (err) => console.error("Error getting wordpress for MSG: " + err)).end();
@@ -509,14 +510,21 @@ function getUserFromMention(mention: string) {
         return client.users.cache.get(mention);
     }
 }
-function handleBlog(res, count, siteName): Promise<number> {
+function handleBlog(res: IncomingMessage, count: number, siteName: string): Promise<number> {
     // console.log("begin " + count);
     return new Promise((resolve, reject) => {
         let datastr = '';
         res.on('data', chunk => datastr += chunk);
 
         res.on('end', async () => {
-            let data = JSON.parse(datastr);
+            let data: any;
+            try {
+                data = JSON.parse(datastr);
+            } catch (e) {
+                console.log("Error parsing JSON for blog " + siteName + " with text " + datastr.substring(0, 100) + ": " + e);
+                resolve(siteName === "MSG students" ? currentNumOfPostsMSG : currentNumOfPostsAsia);
+                return;
+            }
             if(!count) {
                 count = data.found;
 
