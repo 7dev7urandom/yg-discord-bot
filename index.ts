@@ -1,4 +1,4 @@
-import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild, Intents, User, MessageReaction } from 'discord.js'; 
+import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild, Intents, User, MessageReaction, Collection } from 'discord.js'; 
 import { get } from 'https';
 import { readFileSync } from 'fs';
 import { Database } from 'sqlite3';
@@ -404,6 +404,7 @@ try{
                 message.reply("You do not have permission to do that!");
                 return;
             };
+            const allMessages = new Collection<string, Message>();
             let split = message.content.split(' ');
             split.shift();
             if (split.length == 1 && split[0] == "all") {
@@ -412,35 +413,51 @@ try{
                     return;
                 }
                 const channel = message.channel;
-                let messages;
+                let messages: Collection<string, Message> = new Collection();
                 // while((await channel.messages.fetch()).array().length > 0) {
-                await channel.messages.fetch();
-                while((await channel.messages.cache).size > 0) {
-                    await (<TextChannel> channel).bulkDelete(100);
+                // await channel.messages.fetch();
+                while((messages = await (<TextChannel> channel).bulkDelete(100, true)).size >= 100) {
+                    messages.forEach(message => {
+                        allMessages.set(message.id, message);
+                    });
                 }
+                messages.forEach(message => {
+                    allMessages.set(message.id, message);
+                });
                 message.reply("All messages have been purged!");
-                return;
             }
-            let num;
-            if(!isNaN(parseInt(split[0]))) {
+            else if(!isNaN(parseInt(split[0]))) {
+                let num;
                 num = parseInt(split[0]) + 1;
-                (<TextChannel> message.channel).bulkDelete(num);
-                message.reply("Deleted " + num + " messages!");
+                const messages = await (<TextChannel> message.channel).bulkDelete(num, true);
+                message.reply("Deleted " + messages.size + " messages!");
                 return;
             }
-            let user = getUserFromMention(split[0])
-            if(user) {
+            else if(getUserFromMention(split[0])) {
                 message.reply("This has not been implemented yet. Sorry!");
                 return;
-                if(split.length > 1) {
-                    num = parseInt(split[1]);
-                } else {
-                    num = 100;
-                }
+                // if(split.length > 1) {
+                //     num = parseInt(split[1]);
+                // } else {
+                //     num = 100;
+                // }
      
+                // return;
+            } else {
+                message.reply("Missing parameter. Syntax: `!purge <<numberOfMessages>|<username>|all> [numberOfMessages]`");
                 return;
             }
-            message.reply("Missing parameter. Syntax: `!purge <<numberOfMessages>|<username>|all> [numberOfMessages]`");
+            const allMessageString = allMessages.map(message => "**" + message.author + "**: " + message.content).join("\n");
+            const allAttachments = allMessages.map(message => Array.from(message.attachments.values())).flat();
+            const logMessage = new MessageEmbed()
+                .setTitle("Bulk messages deleted in #" + (<TextChannel>message.channel).name)
+                .setAuthor(message.author?.username + '#' + message.author?.discriminator, message.author?.avatarURL())
+                .setDescription(allMessageString)
+                .setTimestamp(message.createdTimestamp)
+                .setColor('#de6053')
+                .setFooter("ID: " + message.id)
+                .attachFiles(allAttachments);
+            logs.send(logMessage);
         } else if (message.content.startsWith("!endit")) {
             message.channel.send(new MessageEmbed().setAuthor("Clem", 'https://cdn.discordapp.com/avatars/708155649455816785/a803bf4737f4dec2ada1e6b0517e3b61.webp')
                 .setDescription("End of convo"));
