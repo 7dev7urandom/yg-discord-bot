@@ -447,7 +447,7 @@ try{
                 message.reply("Missing parameter. Syntax: `!purge <<numberOfMessages>|<username>|all> [numberOfMessages]`");
                 return;
             }
-            const allMessageString = allMessages.map(message => "**" + message.author + "**: " + message.content).join("\n");
+            const allMessageString = allMessages.sort((m1, m2) => m1.createdTimestamp - m2.createdTimestamp).map(message => "**" + message.author?.username + "**: " + message.content).join("\n");
             const allAttachments = allMessages.map(message => Array.from(message.attachments.values())).flat();
             const logMessage = new MessageEmbed()
                 .setTitle("Bulk messages deleted in #" + (<TextChannel>message.channel).name)
