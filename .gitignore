@@ -4,3 +4,5 @@ node_modules/
 *.js
 script.js
 dmresponses.db
+*.map
+*.pyc

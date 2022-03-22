@@ -2,7 +2,9 @@ import { Client, MessageEmbed, TextChannel } from 'discord.js';
 import { get } from 'https';
 import { promises } from 'fs';
 
-const client = new Client();
+const client = new Client({
+    intents: []
+});
 
 const apiHeaders = {
     "Authorization": "Token "
@@ -44,7 +46,7 @@ client.once('ready', async () => {
         .setDescription((thing.content as string).replace(/<h3>.*<\/h3>/g, '').replace(/&.*?;/g, "").replace(/<span class="small-caps" >Lord<\/span>/g, "Lord").trim())
 	.setColor([255, 0, 0])
         .setURL(thing.permalink.replace(/,.*/, '') + "&version=ESV");
-    await (await (channel as TextChannel).send(embed)).react("✅");
+    await (await (channel as TextChannel).send({ embeds: [embed]})).react("✅");
     process.exit();
 });
 promises.readFile('./config.json').then(x => {

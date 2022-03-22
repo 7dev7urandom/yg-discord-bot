@@ -67,14 +67,14 @@ const bibleVerseId = '762664099825451039';
 const bibleVerseAdminId = '767737683560366080';
 
 const client = new Client({
-    ws: {
-        intents: new Intents([
-            Intents.NON_PRIVILEGED,
-            "GUILD_MEMBERS",
-            "GUILD_PRESENCES"
-        ])
-    }
+    intents: new Intents([
+        "GUILD_MEMBERS",
+        "GUILD_PRESENCES"
+    ])
 });
+
+
+
 try{
 
     client.once('ready', async () => {
@@ -92,7 +92,7 @@ try{
         if(reaction.emoji.name === 'this1') {
             reaction.remove();
             reactiondone = await reaction.message.react(reaction.message.guild.emojis.cache.find(e => e.name === 'this'));
-            await reaction.message.awaitReactions((reaction) => reaction.emoji.name === 'this', { max: 1, time: 10000 });
+            await reaction.message.awaitReactions({ filter: (reaction) => reaction.emoji.name === 'this', max: 1, time: 10000 });
             reactiondone.users.remove(client.user);
         }
     })
@@ -101,26 +101,26 @@ try{
     
         const logMessage = new MessageEmbed()
             .setTitle("Message deleted in #" + (<TextChannel>message.channel).name)
-            .setAuthor(message.author?.username + '#' + message.author?.discriminator, message.author?.avatarURL())
+            .setAuthor({ name: message.author.username + '#' + message.author.discriminator, iconURL: message.author.avatarURL() })
+            // .setAuthor(message.author?.username + '#' + message.author?.discriminator, message.author?.avatarURL())
             .setDescription(message.content)
             .setTimestamp(message.createdTimestamp)
             .setColor('#de6053')
-            .setFooter("ID: " + message.id)
-            .attachFiles(Array.from(message.attachments.values()));
-            logs.send(logMessage);
+            .setFooter({ text: "ID: " + message.id });
+            logs.send({ embeds: [logMessage], files: Array.from(message.attachments.values()) });
     });
 
     client.on("message", async message => {
         // console.log("message: " + message.content);
         if(message.channel.id === bibleVerseAdminId) {
-            const collected = await message.awaitReactions((reaction, user) => {
+            const collected = await message.awaitReactions({ filter: (reaction, user) => {
                 const member = mainGuild.members.cache.get(user.id);
-                return member.hasPermission("ADMINISTRATOR") && reaction.emoji.name === "✅" && !user.bot;
-            }, { max: 1 });
+                return member.permissions.has("ADMINISTRATOR") && reaction.emoji.name === "✅" && !user.bot;
+            }, max: 1 });
             if(!collected.size) return;
             if(message.embeds.length) {
                 // Bot message
-                (client.channels.cache.get(bibleVerseId) as TextChannel).send(message.embeds[0]);
+                (client.channels.cache.get(bibleVerseId) as TextChannel).send({ embeds: [message.embeds[0]] });
             } else {
                 // Manual override not implemented
             }
@@ -128,7 +128,7 @@ try{
         }
         if(message.author.bot) return;
 
-        if(mainGuild.roles.cache.get('829658046149033985').members.get(message.author.id) && (message.channel.type == 'dm' || message.channel.id === botChannelId) && message.content.startsWith('!')) {
+        if(mainGuild.roles.cache.get('829658046149033985').members.get(message.author.id) && (message.channel.type === 'DM' || message.channel.id === botChannelId) && message.content.startsWith('!')) {
             if(message.content.startsWith("!responses")) {
                 const desc = [];
                 responses.forEach((value, i) => {
@@ -137,7 +137,7 @@ try{
                 const embed = new MessageEmbed()
                 .setTitle('Current responses')
                 .setDescription("Index | Text\n" + desc.join('\n'));
-                message.channel.send(embed);
+                message.channel.send({ embeds: [embed]});
             } else if (message.content.startsWith("!addres")) {
                 const newResponse = message.content.substring(8);
                 responses.push(newResponse);
@@ -153,7 +153,7 @@ try{
                 const embed = new MessageEmbed()
                 .setTitle('Response deleted')
                 .setDescription("Text: " + responses[index]);
-                message.channel.send(embed);
+                message.channel.send({ embeds: [embed]});
                 db.run(`DELETE FROM responses WHERE value in (SELECT value FROM responses WHERE value=(?) LIMIT 1)`, [responses[index]], function(err) {
                     if (err) throw err;
                 });
@@ -173,10 +173,10 @@ try{
                 message.channel.send("What should I do?");
                 let responseMessage;
                 try {
-                    responseMessage = await message.channel.awaitMessages((m) => {
+                    responseMessage = await message.channel.awaitMessages({ filter: (m) => {
                         // console.log(m, author);
                         return m.author.id === message.author.id
-                    }, { max: 1, time: 60000, errors: ['time']});
+                    }, max: 1, time: 60000, errors: ['time']});
                 } catch {
                     message.channel.send("Too slow! Canceling");
                     return;
@@ -197,9 +197,9 @@ try{
             } else if(message.content.startsWith("!listtrigger")) {
                 db.all(`SELECT * FROM triggers`, (err, result) => {
                     if(err) throw err;
-                    message.channel.send(new MessageEmbed()
-                        .setDescription(result.map(r => `${r.id} | ${r.expression} | ${r.response}`))
-                        .setTitle("All triggers"));
+                    message.channel.send({ embeds: [new MessageEmbed()
+                        .setDescription(result.map(r => `${r.id} | ${r.expression} | ${r.response}`).join("\n"))
+                        .setTitle("All triggers")]});
                 });
             } else if (message.content.startsWith("!remtrigger")) {
                 const id = parseInt(message.content.substring("!remtrigger ".length));
@@ -233,10 +233,10 @@ try{
                 message.channel.send("What should I do?");
                 let responseMessage;
                 try {
-                    responseMessage = await message.channel.awaitMessages((m) => {
+                    responseMessage = await message.channel.awaitMessages({ filter: (m) => {
                         // console.log(m, author);
                         return m.author.id === message.author.id
-                    }, { max: 1, time: 60000, errors: ['time']});
+                    }, max: 1, time: 60000, errors: ['time']});
                 } catch {
                     message.channel.send("Too slow! Canceling");
                     return;
@@ -259,9 +259,9 @@ try{
             } else if(message.content.startsWith("!listpytrigger")) {
                 db.all(`SELECT * FROM pytriggers`, (err, result) => {
                     if(err) throw err;
-                    message.channel.send(new MessageEmbed()
-                        .setDescription(result.map(r => `${r.id}: ${r.expression}\`\`\`py\n${r.response}\n\`\`\``))
-                        .setTitle("All python triggers"));
+                    message.channel.send({ embeds: [new MessageEmbed()
+                        .setDescription(result.map(r => `${r.id}: ${r.expression}\`\`\`py\n${r.response}\n\`\`\``).join("\n"))
+                        .setTitle("All python triggers")]});
                 });
             } else if (message.content.startsWith("!rempytrigger")) {
                 const id = parseInt(message.content.substring("!rempytrigger ".length));
@@ -282,7 +282,7 @@ try{
             return;
             
         }
-        if(message.channel.type == 'dm' && message.author.id !== '694538295010656267') { // Don't respond if the author is Asia
+        if(message.channel.type === 'DM' && message.author.id !== '694538295010656267') { // Don't respond if the author is Asia
             message.channel.send(responses[Math.floor(Math.random() * responses.length)]);
         }
 
@@ -305,7 +305,7 @@ try{
                     }
                     console.log("lastMessage is " + lastMessage + " and config is " + JSON.stringify(config));
                     const messages = await message.channel.messages.fetch({ limit: 100 });
-                        console.log("this many messages: " + messages.array().length);
+                        console.log("this many messages: " + messages.size);
                         var currentMessageCount = 0;
                         messages.forEach(message => {
                             currentMessageCount++;
@@ -377,7 +377,7 @@ try{
                 console.log("---------------- " + JSON.stringify(messageJson));
                 const buf = Buffer.from(JSON.stringify(messageJson));
                 const attachment = new MessageAttachment(buf, "messages.json");
-                message.channel.send("Export complete! Here is the data", attachment);
+                message.channel.send({ content: "Export complete! Here is the data", files: [attachment] });
             } else {
                 message.reply("Sorry, only Administrators can use this feature.")
             }
@@ -387,20 +387,20 @@ try{
                 .setAuthor(message.member.displayName, message.author.avatarURL())
                 .setDescription("**" + nick + "**\n\nReact with :ballot_box_with_check: to vote. 7 votes required to change")
                 .setTitle("Nickname suggestion");
-            const msg = await message.channel.send(embed);
+            const msg = await message.channel.send({ embeds: [embed]});
             await msg.react("☑️");
             // const fjdsk = 0;
             const reacted = new Set<any>();
-            await msg.awaitReactions((reaction, user) => {
+            await msg.awaitReactions({ filter: (reaction, user) => {
                 if(reaction.emoji.name !== "☑️") return false;
                 if(reacted.has(user.id)) return false;
                 reacted.add(user.id);
                 return true;
-            }, { max: 6 });
+            }, max: 6 });
 		    msg.channel.send(`Changing nickname to ${nick}!`);
             msg.member.setNickname(nick);
         } else if (message.content.startsWith('!purge')) {
-            if(!message.member?.hasPermission('MANAGE_MESSAGES')) {
+            if(!message.member?.permissions.has('MANAGE_MESSAGES')) {
                 message.reply("You do not have permission to do that!");
                 return;
             };
@@ -408,7 +408,7 @@ try{
             let split = message.content.split(' ');
             split.shift();
             if (split.length == 1 && split[0] == "all") {
-                if(!message.member.hasPermission('ADMINISTRATOR')) {
+                if(!message.member.permissions.has('ADMINISTRATOR')) {
                     message.reply("Only administrators can clear whole channels!");
                     return;
                 }
@@ -455,12 +455,11 @@ try{
                 .setDescription(allMessageString)
                 .setTimestamp(message.createdTimestamp)
                 .setColor('#de6053')
-                .setFooter("ID: " + message.id)
-                .attachFiles(allAttachments);
-            logs.send(logMessage);
+                .setFooter("ID: " + message.id);
+            logs.send({ embeds: [logMessage], files: allAttachments });
         } else if (message.content.startsWith("!endit")) {
-            message.channel.send(new MessageEmbed().setAuthor("Clem", 'https://cdn.discordapp.com/avatars/708155649455816785/a803bf4737f4dec2ada1e6b0517e3b61.webp')
-                .setDescription("End of convo"));
+            message.channel.send({ embeds: [new MessageEmbed().setAuthor({name: "Clem", iconURL: 'https://cdn.discordapp.com/avatars/708155649455816785/a803bf4737f4dec2ada1e6b0517e3b61.webp' })
+                .setDescription("End of convo")]});
             message.delete();
         } else if (message.content.startsWith("!stats")) {
             if(lastStats > Date.now() - 1000 * 30) return;
@@ -567,7 +566,7 @@ function handleBlog(res: IncomingMessage, count: number, siteName: string): Prom
 //                              http://familystudents.family.blog/2020/11/05/vergesssen/
                     .setFooter("Automatically detected by a bot. Please report any issues")
                     .setURL(data.posts[0].URL);
-                (<TextChannel> await client.channels.cache.get(blogId)?.fetch()).send(embed);
+                (<TextChannel> await client.channels.cache.get(blogId)?.fetch()).send({ embeds: [embed]});
                 count = data.found;
                 resolve(count);
             }

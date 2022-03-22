@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, MessageEmbedOptions } from "discord.js";
+import { Message, MessageEmbed, MessageEmbedOptions, TextChannel } from "discord.js";
 import { py, python } from 'pythonia';
 
 export class BooleanExpression {
@@ -50,7 +50,7 @@ export class ActionExpression {
         return text => value.channel.send(text);
     }
     sendEmbed(value: Message) {
-        return (data: MessageEmbedOptions) => value.channel.send(new MessageEmbed(data));
+        return (data: MessageEmbedOptions) => value.channel.send({ embeds: [new MessageEmbed(data)]});
     }
     delay(value: Message) {
         return (delay: number) => new Promise(r => setTimeout(r, delay));
@@ -102,11 +102,12 @@ export class PythonActionExpression {
         let res: [boolean, string[]] = [true, []];
         while(await res[0]) { 
             try {
-                wait = await value.channel.awaitMessages(m => !m.author.bot, { max: 1, time: 30000, errors: ['time'] });
+                wait = await value.channel.awaitMessages({ filter: m => !m.author.bot, max: 1, time: 30000, errors: ['time'] });
                 res = (await pyFuncs.executeWaitable(functionId, wait.first()));
             } catch(e) {
-                console.log(e);
-                value.channel.send("Waitable timeout!");
+                // if((e as Error).message.includes('*** PY ***')) 
+                value.channel.send("Internal python error. I've sent more info to 7dev");
+                (value.guild.channels.cache.get('782854127520579607') as TextChannel).send(`Python error with message in ${(value.channel as TextChannel).name}\n\`\`\`${e}\`\`\``);
                 pyFuncs.waitableTimeout(functionId);
                 return;
             }
