@@ -1,10 +1,8 @@
-import { Client, MessageEmbed, TextChannel } from 'discord.js';
+import { MessageEmbed, TextChannel } from 'discord.js';
 import { get } from 'https';
 import { promises } from 'fs';
 
-const client = new Client({
-    intents: []
-});
+import { client, events } from './client';
 
 const apiHeaders = {
     "Authorization": "Token "
@@ -38,12 +36,12 @@ async function getVerse() {
     return json.votd;
 }
 
-client.once('ready', async () => {
+events.on('ready', async () => {
     const channel = client.channels.cache.get('767737683560366080');
     const thing = await getVerse();
     const embed = new MessageEmbed()
         .setTitle(thing.reference.replace(/,.*/, '') + " (ESV)")
-        .setDescription((thing.content as string).replace(/<h3>.*<\/h3>/g, '').replace(/&.*?;/g, "").replace(/<span class="small-caps" >Lord<\/span>/g, "Lord").trim())
+        .setDescription((thing.content as string).replace(/<h\d>.*<\/h\d>/g, '').replace(/&.*?;/g, "").replace(/<span class="small-caps" >Lord<\/span>/g, "Lord").trim())
 	.setColor([255, 0, 0])
         .setURL(thing.permalink.replace(/,.*/, '') + "&version=ESV");
     await (await (channel as TextChannel).send({ embeds: [embed]})).react("✅");
@@ -52,5 +50,5 @@ client.once('ready', async () => {
 promises.readFile('./config.json').then(x => {
     const config = JSON.parse(x.toString('utf-8'));
     apiHeaders.Authorization += config.esvtoken;
-    client.login(config.token);
+    // client.login(config.token);
 });
