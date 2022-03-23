@@ -122,7 +122,7 @@ function parseDateField(str) {
     if(date.getDay() !== dayOfWeek) throw new Error(`Date ${match[0]} is invalid: incorrect day of week`);
     return date;
 }
-(async () => {
+export const run = (async () => {
     try {
         await new Promise(r => events.on("ready", r));
         await scheduleEventFromDoc();
@@ -130,7 +130,5 @@ function parseDateField(str) {
         await constants.logs.send({
             content: `Error scheduling event: ${e}`
         });
-    } finally {
-        client.destroy();
     }
-})();
+});

@@ -2,7 +2,7 @@ import { MessageEmbed, TextChannel } from 'discord.js';
 import { get } from 'https';
 import { promises } from 'fs';
 import { client, events } from './client';
-import './sheetsTest';
+import { run } from './sheetsTest';
 
 const apiHeaders = {
     "Authorization": "Token "
@@ -36,7 +36,7 @@ async function getVerse() {
     return json.votd;
 }
 
-events.on('ready', async () => {
+const localRun = async () => {
     const channel = await client.channels.fetch('767737683560366080');
     const thing = await getVerse();
     const embed = new MessageEmbed()
@@ -45,10 +45,14 @@ events.on('ready', async () => {
 	    .setColor([255, 0, 0])
         .setURL(thing.permalink.replace(/,.*/, '') + "&version=ESV");
     await (await (channel as TextChannel).send({ embeds: [embed]})).react("✅");
-    process.exit();
-});
+    // process.exit();
+};
 promises.readFile('./config.json').then(x => {
     const config = JSON.parse(x.toString('utf-8'));
     apiHeaders.Authorization += config.esvtoken;
     // client.login(config.token);
+});
+events.on('ready', async () => {
+    await Promise.all([run, localRun]);
+    process.exit();
 });
