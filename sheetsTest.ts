@@ -70,12 +70,13 @@ async function scheduleEventFromDoc() {
         entityMetadata: {
             location: `${host} home`
         }
-    })).status !== "SCHEDULED") {
-        sheet.getCell(y, 5).value = "Error scheduling event";
-        throw new Error("Couldn't schedule event");
-    } else {
+    }))) {
         sheet.getCell(y, 5).value = "✓";
         console.log("Event scheduled");
+    } else {
+        sheet.getCell(y, 5).value = "Error scheduling event";
+        sheet.getCell(y, 5).save();
+        throw new Error("Couldn't schedule event");
     }
     await sheet.saveUpdatedCells();
 };
