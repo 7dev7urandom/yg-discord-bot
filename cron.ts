@@ -37,12 +37,12 @@ async function getVerse() {
 }
 
 events.on('ready', async () => {
-    const channel = client.channels.cache.get('767737683560366080');
+    const channel = await client.channels.fetch('767737683560366080');
     const thing = await getVerse();
     const embed = new MessageEmbed()
         .setTitle(thing.reference.replace(/,.*/, '') + " (ESV)")
         .setDescription((thing.content as string).replace(/<h\d>.*<\/h\d>/g, '').replace(/&.*?;/g, "").replace(/<span class="small-caps" >Lord<\/span>/g, "Lord").trim())
-	.setColor([255, 0, 0])
+	    .setColor([255, 0, 0])
         .setURL(thing.permalink.replace(/,.*/, '') + "&version=ESV");
     await (await (channel as TextChannel).send({ embeds: [embed]})).react("✅");
     process.exit();
