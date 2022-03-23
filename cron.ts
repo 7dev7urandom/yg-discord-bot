@@ -1,8 +1,8 @@
 import { MessageEmbed, TextChannel } from 'discord.js';
 import { get } from 'https';
 import { promises } from 'fs';
-
 import { client, events } from './client';
+import './sheetsTest';
 
 const apiHeaders = {
     "Authorization": "Token "
