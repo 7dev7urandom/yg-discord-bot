@@ -4,8 +4,6 @@ import { readFileSync } from 'fs';
 import { Database } from 'sqlite3';
 import { ActionExpression, BooleanExpression, PythonActionExpression, PythonBooleanExpression } from './expression';
 import { IncomingMessage } from 'http';
-
-const botChannelId = '782854127520579607';
     
 let currentNumOfPostsMSG: number;
 let currentNumOfPostsAsia: number;
@@ -62,31 +60,10 @@ db.serialize(() => {
     });
 });
 
-const blogId = '767695352144461825';
-const bibleVerseId = '762664099825451039';
-const bibleVerseAdminId = '767737683560366080';
-
-const client = new Client({
-    intents: new Intents([
-        "GUILD_MEMBERS",
-        "GUILD_PRESENCES"
-    ])
-});
-
-
+import { bibleVerseAdminId, bibleVerseId, blogId, botChannelId, client, constants } from "./client";
 
 try{
-
-    client.once('ready', async () => {
-        console.log("Client ready!");
-        mainGuild = client.guilds.cache.get('762299189290991616'); // Youth Group
-        const x = mainGuild?.channels.resolve('782854127520579607');
-        if (x) (<TextChannel> await x.fetch()).send("YG bot loaded");
-        logs = <TextChannel> await client.channels.fetch('823825055736922115');
-    });
     var messageJson: any = {};
-    var mainGuild: Guild | undefined;
-    var logs: TextChannel;
     client.on('messageReactionAdd', async (reaction) => {
         let reactiondone: MessageReaction;
         if(reaction.emoji.name === 'this1') {
@@ -97,7 +74,7 @@ try{
         }
     })
     client.on('messageDelete', async message => {
-        if(message.guild !== mainGuild) return;
+        if(message.guild !== constants.mainGuild) return;
     
         const logMessage = new MessageEmbed()
             .setTitle("Message deleted in #" + (<TextChannel>message.channel).name)
@@ -107,14 +84,14 @@ try{
             .setTimestamp(message.createdTimestamp)
             .setColor('#de6053')
             .setFooter({ text: "ID: " + message.id });
-            logs.send({ embeds: [logMessage], files: Array.from(message.attachments.values()) });
+            constants.logs.send({ embeds: [logMessage], files: Array.from(message.attachments.values()) });
     });
 
     client.on("message", async message => {
         // console.log("message: " + message.content);
         if(message.channel.id === bibleVerseAdminId) {
             const collected = await message.awaitReactions({ filter: (reaction, user) => {
-                const member = mainGuild.members.cache.get(user.id);
+                const member = constants.mainGuild.members.cache.get(user.id);
                 return member.permissions.has("ADMINISTRATOR") && reaction.emoji.name === "✅" && !user.bot;
             }, max: 1 });
             if(!collected.size) return;
@@ -128,7 +105,7 @@ try{
         }
         if(message.author.bot) return;
 
-        if(mainGuild.roles.cache.get('829658046149033985').members.get(message.author.id) && (message.channel.type === 'DM' || message.channel.id === botChannelId) && message.content.startsWith('!')) {
+        if(constants.mainGuild.roles.cache.get('829658046149033985').members.get(message.author.id) && (message.channel.type === 'DM' || message.channel.id === botChannelId) && message.content.startsWith('!')) {
             if(message.content.startsWith("!responses")) {
                 const desc = [];
                 responses.forEach((value, i) => {
@@ -456,7 +433,7 @@ try{
                 .setTimestamp(message.createdTimestamp)
                 .setColor('#de6053')
                 .setFooter("ID: " + message.id);
-            logs.send({ embeds: [logMessage], files: allAttachments });
+                constants.logs.send({ embeds: [logMessage], files: allAttachments });
         } else if (message.content.startsWith("!endit")) {
             message.channel.send({ embeds: [new MessageEmbed().setAuthor({name: "Clem", iconURL: 'https://cdn.discordapp.com/avatars/708155649455816785/a803bf4737f4dec2ada1e6b0517e3b61.webp' })
                 .setDescription("End of convo")]});
@@ -505,9 +482,6 @@ try{
     //     });
     // }, 60000)
     
-    const token = JSON.parse(readFileSync('./config.json').toString('utf-8')).token;
-    client.login(token);
-    console.log("Authen with token: " + token);
 } catch (e) {
     // Error, exit with error so systemctl will restart
     console.error(e);
