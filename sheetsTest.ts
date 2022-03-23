@@ -77,7 +77,7 @@ async function scheduleEventFromDoc() {
         sheet.getCell(y, 5).value = "✓";
         console.log("Event scheduled");
     }
-    sheet.saveUpdatedCells();
+    await sheet.saveUpdatedCells();
 };
 
 function parseTimeField(str, baseDate) {
