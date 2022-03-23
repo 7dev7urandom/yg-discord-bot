@@ -53,6 +53,6 @@ promises.readFile('./config.json').then(x => {
     // client.login(config.token);
 });
 events.on('ready', async () => {
-    await Promise.all([run, localRun]);
+    await Promise.all([run(), localRun()]);
     process.exit();
 });

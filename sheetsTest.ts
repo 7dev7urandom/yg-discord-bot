@@ -124,7 +124,6 @@ function parseDateField(str) {
 }
 export const run = (async () => {
     try {
-        await new Promise(r => events.on("ready", r));
         await scheduleEventFromDoc();
     } catch (e) {
         await constants.logs.send({
