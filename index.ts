@@ -1,3 +1,16 @@
+// Dear programmer:
+// When I wrote this code, only God and
+// I knew how it worked.
+// Now, only God knows it!
+// 
+// Therefore, if you are trying to optimize
+// this routine and it fails (most surely),
+// please increase this counter as a
+// warning for the next person:
+// 
+// total hours wasted here = 82
+//
+
 import { Client, MessageAttachment, ChannelLogsQueryOptions, Message, MessageEmbed, TextChannel, Guild, Intents, User, MessageReaction, Collection } from 'discord.js'; 
 import { get } from 'https';
 import { readFileSync } from 'fs';
@@ -84,11 +97,10 @@ try{
             .setTimestamp(message.createdTimestamp)
             .setColor('#de6053')
             .setFooter({ text: "ID: " + message.id });
-            constants.logs.send({ embeds: [logMessage], files: Array.from(message.attachments.values()) });
+        constants.logs.send({ embeds: [logMessage], files: Array.from(message.attachments.values()) });
     });
 
-    client.on("message", async message => {
-        // console.log("message: " + message.content);
+    client.on("messageCreate", async message => {
         if(message.channel.id === bibleVerseAdminId) {
             const collected = await message.awaitReactions({ filter: (reaction, user) => {
                 const member = constants.mainGuild.members.cache.get(user.id);

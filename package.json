@@ -16,7 +16,7 @@
     "discord.js": "^13.6.0",
     "google-spreadsheet": "^3.2.0",
     "googleapis": "^39.2.0",
-    "pythonia": "^0.2.13",
+    "pythonia": "^0.2.16",
     "sqlite3": "^5.0.0"
   },
   "devDependencies": {

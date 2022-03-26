@@ -14,7 +14,12 @@ export const constants: {
 export const client = new Client({
     intents: new Intents([
         "GUILD_MEMBERS",
-        "GUILD_PRESENCES"
+        "GUILD_PRESENCES",
+        "GUILDS",
+        "GUILD_MESSAGES",
+        "DIRECT_MESSAGES",
+        "GUILD_MESSAGE_REACTIONS",
+        "GUILD_SCHEDULED_EVENTS"
     ])
 });
 export const events = new EventEmitter();
