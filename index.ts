@@ -453,9 +453,10 @@ try{
         } else if (message.content.startsWith("!stats")) {
             if(lastStats > Date.now() - 1000 * 30) return;
             lastStats = Date.now();
-            message.channel.send(`Do Not Disturb: ${message.guild.members.cache.filter(x => x.presence.status === 'dnd').size}\n` +
-                                 `Online: ${message.guild.members.cache.filter(x => x.presence.status === 'online').size - 1}\n` + 
-                                 `Idle: ${message.guild.members.cache.filter(x => x.presence.status === 'idle').size}`);
+            const onlineUsers = message.guild.members.cache.filter(x => x.presence !== null);
+            message.channel.send(`Do Not Disturb: ${onlineUsers.filter(x => x.presence.status === 'dnd').size}\n` +
+                                 `Online: ${onlineUsers.filter(x => x.presence.status === 'online').size - 1}\n` + 
+                                 `Idle: ${onlineUsers.filter(x => x.presence.status === 'idle').size}`);
         } else {
             expressions.forEach((res, key) => {
                 if(key.checkMatches(message)) res.execute(message);
