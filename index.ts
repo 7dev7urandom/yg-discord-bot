@@ -28,7 +28,7 @@ let responses = [
 let expressions: Map<BooleanExpression, ActionExpression> = new Map();
 let pyExpressions: Map<PythonBooleanExpression, PythonActionExpression> = new Map();
 
-let lastStats: number = Date.now();
+let lastStats: number = 0;
 
 const db = new Database('dmresponses.db', (err) => {
     if (err) throw err;

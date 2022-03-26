@@ -19,7 +19,8 @@ export const client = new Client({
         "GUILD_MESSAGES",
         "DIRECT_MESSAGES",
         "GUILD_MESSAGE_REACTIONS",
-        "GUILD_SCHEDULED_EVENTS"
+        "GUILD_SCHEDULED_EVENTS",
+        "GUILD_PRESENCES"
     ])
 });
 export const events = new EventEmitter();
