@@ -470,7 +470,8 @@ try{
                         await res.execute(message);
                     }
                 } catch (e) {
-                    (message.guild.channels.cache.get(botChannelId) as TextChannel).send("@<494009206341369857> there was an error parsing python expression " + key.expression + ": " + e);
+                    // @<494009206341369857>
+                    (message.guild.channels.cache.get(botChannelId) as TextChannel).send("There was an error parsing python expression " + key.expression + ": " + e.message);
                 }
             });
         }
