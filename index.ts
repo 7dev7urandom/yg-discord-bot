@@ -461,12 +461,14 @@ try{
             expressions.forEach((res, key) => {
                 if(key.checkMatches(message)) res.execute(message);
             });
-            pyExpressions.forEach((res, key) => {
+            pyExpressions.forEach(async (res, key) => {
                 try {
                     // const x = key.execute(message);
                     // // console.log(x);
                     // if(await x) res.execute(message);
-                    key.execute(message).then(x => x ? res.execute(message) : null);
+                    if(await key.execute(message)) {
+                        await res.execute(message);
+                    }
                 } catch (e) {
                     (message.guild.channels.cache.get(botChannelId) as TextChannel).send("@<494009206341369857> there was an error parsing python expression " + key.expression + ": " + e);
                 }
