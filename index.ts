@@ -101,6 +101,9 @@ try{
     });
 
     client.on("messageCreate", async message => {
+        if(message.channel.type === "DM") {
+            console.log(message);
+        }
         if(message.channel.id === bibleVerseAdminId) {
             const collected = await message.awaitReactions({ filter: (reaction, user) => {
                 const member = constants.mainGuild.members.cache.get(user.id);
@@ -373,7 +376,7 @@ try{
         } else if (message.content.startsWith("!suggestnick ")) {
             const nick = message.content.replace("!suggestnick ", "");
             const embed = new MessageEmbed()
-                .setAuthor(message.member.displayName, message.author.avatarURL())
+                .setAuthor({ name: message.member.displayName, iconURL: message.author.avatarURL()})
                 .setDescription("**" + nick + "**\n\nReact with :ballot_box_with_check: to vote. 7 votes required to change")
                 .setTitle("Nickname suggestion");
             const msg = await message.channel.send({ embeds: [embed]});
@@ -440,7 +443,7 @@ try{
             const allAttachments = allMessages.map(message => Array.from(message.attachments.values())).flat();
             const logMessage = new MessageEmbed()
                 .setTitle("Bulk messages deleted in #" + (<TextChannel>message.channel).name)
-                .setAuthor(message.author?.username + '#' + message.author?.discriminator, message.author?.avatarURL())
+                .setAuthor({ name: message.author?.username + '#' + message.author?.discriminator, iconURL: message.author?.avatarURL()})
                 .setDescription(allMessageString)
                 .setTimestamp(message.createdTimestamp)
                 .setColor('#de6053')
@@ -547,7 +550,7 @@ function handleBlog(res: IncomingMessage, count: number, siteName: string): Prom
 
                 const embed = new MessageEmbed()
                     .setTitle(siteName + " post: " + decodeEntities(data.posts[0].title))
-                    .setAuthor(data.posts[0].author.name, data.posts[0].author.avatar_URL)
+                    .setAuthor({ name: data.posts[0].author.name, iconURL: data.posts[0].author.avatar_URL})
                     .setDescription(desc)
                     .setTimestamp(new Date(data.posts[0].date))
                     .setColor('#0000aa')
