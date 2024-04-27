@@ -9,13 +9,15 @@
   "author": "Micah Henney",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/voice": "^0.15.0",
     "@types/google-spreadsheet": "^3.1.5",
     "@types/npm": "^2.0.31",
     "@types/sqlite3": "^3.1.6",
     "@types/underscore": "^1.10.24",
-    "discord.js": "^13.6.0",
+    "discord.js": "^14.14.1",
     "google-spreadsheet": "^3.2.0",
     "googleapis": "^39.2.0",
+    "libsodium-wrappers": "^0.7.11",
     "pythonia": "^0.2.16",
     "sqlite3": "^5.0.0"
   },
