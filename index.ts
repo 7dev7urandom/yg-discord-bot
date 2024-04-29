@@ -45,8 +45,6 @@ let expressions: Map<BooleanExpression, ActionExpression> = new Map();
 let pyExpressions: Map<PythonBooleanExpression, PythonActionExpression> =
   new Map();
 
-let lastStats: number = 0;
-
 const db = new Database("dmresponses.db", (err) => {
   if (err) throw err;
   console.log("Got db");
@@ -54,11 +52,11 @@ const db = new Database("dmresponses.db", (err) => {
 db.run(`CREATE TABLE IF NOT EXISTS responses (value TEXT PRIMARY KEY)`);
 // db.run(`DROP TABLE triggers`);
 db.run(
-  `CREATE TABLE IF NOT EXISTS triggers (id INTEGER PRIMARY KEY AUTOINCREMENT, expression TEXT, response TEXT)`
+  `CREATE TABLE IF NOT EXISTS triggers (id INTEGER PRIMARY KEY AUTOINCREMENT, expression TEXT, response TEXT)`,
 );
 
 db.run(
-  `CREATE TABLE IF NOT EXISTS pytriggers (id INTEGER PRIMARY KEY AUTOINCREMENT, expression TEXT, response TEXT)`
+  `CREATE TABLE IF NOT EXISTS pytriggers (id INTEGER PRIMARY KEY AUTOINCREMENT, expression TEXT, response TEXT)`,
 );
 
 db.serialize(() => {
@@ -86,7 +84,7 @@ db.serialize(() => {
         responses,
         (err) => {
           if (err) throw err;
-        }
+        },
       );
     }
   });
@@ -96,7 +94,7 @@ db.serialize(() => {
       rows.map((r) => [
         new BooleanExpression(r.expression),
         new ActionExpression(r.response),
-      ])
+      ]),
     );
   });
   db.all(`SELECT * FROM pytriggers`, [], (err, rows) => {
@@ -105,7 +103,7 @@ db.serialize(() => {
       rows.map((r) => [
         new PythonBooleanExpression(r.expression),
         new PythonActionExpression(r.response),
-      ])
+      ]),
     );
   });
 });
@@ -126,7 +124,7 @@ try {
     if (reaction.emoji.name === "this1") {
       reaction.remove();
       reactiondone = await reaction.message.react(
-        reaction.message.guild.emojis.cache.find((e) => e.name === "this")
+        reaction.message.guild.emojis.cache.find((e) => e.name === "this"),
       );
       await reaction.message.awaitReactions({
         filter: (reaction) => reaction.emoji.name === "this",
@@ -211,11 +209,11 @@ try {
         const index = parseInt(message.content.substring(8));
         if (!index)
           message.channel.send(
-            "Error: Invalid value " + message.content.substring(8)
+            "Error: Invalid value " + message.content.substring(8),
           );
         if (index >= responses.length) {
           message.channel.send(
-            "Error: Index out of range 0-" + (responses.length - 1)
+            "Error: Index out of range 0-" + (responses.length - 1),
           );
           return;
         }
@@ -228,7 +226,7 @@ try {
           [responses[index]],
           function (err) {
             if (err) throw err;
-          }
+          },
         );
         responses.splice(index, 1);
       } else if (message.content.startsWith("!addtrigger")) {
@@ -274,7 +272,7 @@ try {
           [expr, text.content],
           (err) => {
             if (err) throw err;
-          }
+          },
         );
       } else if (message.content.startsWith("!listtrigger")) {
         db.all(`SELECT * FROM triggers`, (err, result) => {
@@ -285,7 +283,7 @@ try {
                 .setDescription(
                   result
                     .map((r) => `${r.id} | ${r.expression} | ${r.response}`)
-                    .join("\n")
+                    .join("\n"),
                 )
                 .setTitle("All triggers"),
             ],
@@ -306,7 +304,7 @@ try {
             rows.map((r) => [
               new BooleanExpression(r.expression),
               new ActionExpression(r.response),
-            ])
+            ]),
           );
         });
       } else if (message.content.startsWith("!addpytrigger")) {
@@ -362,7 +360,7 @@ try {
           [expr, action],
           (err) => {
             if (err) throw err;
-          }
+          },
         );
       } else if (message.content.startsWith("!listpytrigger")) {
         db.all(`SELECT * FROM pytriggers`, (err, result) => {
@@ -374,9 +372,9 @@ try {
                   result
                     .map(
                       (r) =>
-                        `${r.id}: ${r.expression}\`\`\`py\n${r.response}\n\`\`\``
+                        `${r.id}: ${r.expression}\`\`\`py\n${r.response}\n\`\`\``,
                     )
-                    .join("\n")
+                    .join("\n"),
                 )
                 .setTitle("All python triggers"),
             ],
@@ -397,13 +395,13 @@ try {
             rows.map((r) => [
               new PythonBooleanExpression(r.expression),
               new PythonActionExpression(r.response),
-            ])
+            ]),
           );
         });
       } else {
         message.channel.send(
           message.content.split(" ")[0] +
-            " is not a valid command. Valid commands are: !responses, !addres, !remres, !listtrigger, !remtrigger, !addtrigger, !listpytrigger, !rempytrigger, !addpytrigger"
+            " is not a valid command. Valid commands are: !responses, !addres, !remres, !listtrigger, !remtrigger, !addtrigger, !listpytrigger, !rempytrigger, !addpytrigger",
         );
       }
       return;
@@ -414,7 +412,7 @@ try {
     ) {
       // Don't respond if the author is Asia
       message.channel.send(
-        responses[Math.floor(Math.random() * responses.length)]
+        responses[Math.floor(Math.random() * responses.length)],
       );
     }
 
@@ -422,7 +420,7 @@ try {
     if (message.content.startsWith("!export")) {
       if (message.member?.roles.cache.has("762592153393692682")) {
         message.channel.send(
-          `Message export requested by ${message.member?.displayName}. Messages exporting!`
+          `Message export requested by ${message.member?.displayName}. Messages exporting!`,
         );
 
         var keepGoing = true;
@@ -438,7 +436,7 @@ try {
             prevLastMessage = lastMessage;
           }
           console.log(
-            "lastMessage is " + lastMessage // +
+            "lastMessage is " + lastMessage, // +
             //   " and config is " +
             //   JSON.stringify(config)
           );
@@ -579,7 +577,7 @@ try {
         .setDescription(
           "**" +
             nick +
-            "**\n\nReact with :ballot_box_with_check: to vote. 7 votes required to change"
+            "**\n\nReact with :ballot_box_with_check: to vote. 7 votes required to change",
         )
         .setTitle("Nickname suggestion");
       const msg = await message.channel.send({ embeds: [embed] });
@@ -636,7 +634,7 @@ try {
         num = parseInt(split[0]) + 1;
         const messages = await (<TextChannel>message.channel).bulkDelete(
           num,
-          true
+          true,
         );
         message.reply("Deleted " + messages.size + " messages!");
         return;
@@ -652,7 +650,7 @@ try {
         // return;
       } else {
         message.reply(
-          "Missing parameter. Syntax: `!purge <<numberOfMessages>|<username>|all> [numberOfMessages]`"
+          "Missing parameter. Syntax: `!purge <<numberOfMessages>|<username>|all> [numberOfMessages]`",
         );
         return;
       }
@@ -660,7 +658,7 @@ try {
         .sort((m1, m2) => m1.createdTimestamp - m2.createdTimestamp)
         .map(
           (message) =>
-            "**" + message.author?.username + "**: " + message.content
+            "**" + message.author?.username + "**: " + message.content,
         )
         .join("\n");
       const allAttachments = allMessages
@@ -668,7 +666,7 @@ try {
         .flat();
       const logMessage = new EmbedBuilder()
         .setTitle(
-          "Bulk messages deleted in #" + (<TextChannel>message.channel).name
+          "Bulk messages deleted in #" + (<TextChannel>message.channel).name,
         )
         .setAuthor({
           name: message.author?.username + "#" + message.author?.discriminator,
@@ -698,22 +696,7 @@ try {
       });
       message.delete();
     } else if (message.content.startsWith("!stats")) {
-      if (lastStats > Date.now() - 1000 * 30) return;
-      lastStats = Date.now();
-      const onlineUsers = message.guild.members.cache.filter(
-        (x) => x.presence !== null
-      );
-      message.channel.send(
-        `Do Not Disturb: ${
-          onlineUsers.filter((x) => x.presence.status === "dnd").size
-        }\n` +
-          `Online: ${
-            onlineUsers.filter((x) => x.presence.status === "online").size - 1
-          }\n` +
-          `Idle: ${
-            onlineUsers.filter((x) => x.presence.status === "idle").size
-          }`
-      );
+      message.reply("Use the new command! /stats");
     } else {
       expressions.forEach((res, key) => {
         if (key.checkMatches(message)) res.execute(message);
@@ -732,7 +715,7 @@ try {
             "There was an error parsing python expression " +
               key.expression +
               ": " +
-              e.message
+              e.message,
           );
         }
       });
@@ -746,12 +729,12 @@ try {
         currentNumOfPostsMSG = await handleBlog(
           res,
           currentNumOfPostsMSG,
-          "MSG students"
+          "MSG students",
         );
-      }
+      },
     )
       .on("err", (err) =>
-        console.error("Error getting wordpress for MSG: " + err)
+        console.error("Error getting wordpress for MSG: " + err),
       )
       .end();
     get(
@@ -760,14 +743,14 @@ try {
         currentNumOfPostsAsia = await handleBlog(
           res,
           currentNumOfPostsAsia,
-          "Rhino Riders Ramblings"
+          "Rhino Riders Ramblings",
         );
-      }
+      },
     )
       .on("err", (err) =>
         console.error(
-          "Error getting wordpress for RhinoRidersRamblings: " + err
-        )
+          "Error getting wordpress for RhinoRidersRamblings: " + err,
+        ),
       )
       .end();
   }, 5000);
@@ -805,7 +788,7 @@ function getUserFromMention(mention: string) {
 function handleBlog(
   res: IncomingMessage,
   count: number,
-  siteName: string
+  siteName: string,
 ): Promise<number> {
   // console.log("begin " + count);
   return new Promise((resolve, reject) => {
@@ -823,12 +806,12 @@ function handleBlog(
             " with text " +
             datastr.substring(0, 100) +
             ": " +
-            e
+            e,
         );
         resolve(
           siteName === "MSG students"
             ? currentNumOfPostsMSG
-            : currentNumOfPostsAsia
+            : currentNumOfPostsAsia,
         );
         return;
       }

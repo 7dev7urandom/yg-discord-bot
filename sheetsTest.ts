@@ -30,16 +30,16 @@ async function scheduleEventFromDoc() {
     (header, i) => {
       if (sheet.getCell(1, i).value !== header) {
         throw new Error(
-          `Header mismatch: ${sheet.getCell(1, i).value} !== ${header}`
+          `Header mismatch: ${sheet.getCell(1, i).value} !== ${header}`,
         );
       }
-    }
+    },
   );
   let y = 2;
   while (true) {
     if (sheet.getCell(y, 5).value !== null && sheet.getCell(y, 5).value !== "✓")
       throw new Error(
-        "Unexpected value in `Bot parsed` field: " + sheet.getCell(y, 5).value
+        "Unexpected value in `Bot parsed` field: " + sheet.getCell(y, 5).value,
       );
     if (sheet.getCell(y, 5).value === null) {
       if (parseDateField(sheet.getCell(y, 0).value) < new Date()) {
@@ -75,7 +75,7 @@ async function scheduleEventFromDoc() {
     throw new Error("Start time is after end time");
 
   console.log(
-    `Adding event ${startDate} to ${endDate} at ${host} for ${passage}`
+    `Adding event ${startDate} to ${endDate} at ${host} for ${passage}`,
   );
 
   // Add event to discord
@@ -114,7 +114,7 @@ function parseTimeField(str, baseDate) {
     baseDate.getDate(),
     hour,
     parseInt(match[2] ?? "0"),
-    0
+    0,
   );
   return date;
 }
@@ -154,7 +154,7 @@ function parseDateField(str) {
     )
   )
     throw new Error(
-      `Date ${match[0]} is invalid: ${day}, ${month}, ${dayOfWeek}`
+      `Date ${match[0]} is invalid: ${day}, ${month}, ${dayOfWeek}`,
     );
   const year =
     new Date().getMonth() > month

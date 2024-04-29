@@ -4,7 +4,8 @@
   "description": "Bot for YG discord server",
   "main": "index.js",
   "scripts": {
-    "test": "tsc index.ts && node index.js"
+    "test": "tsc index.ts && node index.js",
+    "build": "tsc"
   },
   "author": "Micah Henney",
   "license": "ISC",
@@ -19,9 +20,12 @@
     "googleapis": "^39.2.0",
     "libsodium-wrappers": "^0.7.11",
     "pythonia": "^0.2.16",
-    "sqlite3": "^5.0.0"
+    "sqlite3": "^5.0.0",
+    "typescript": "5.4.5"
   },
   "devDependencies": {
-    "@types/node": "^16.11.6"
+    "@types/node": "^16.11.6",
+    "eslint": "^9.1.1",
+    "prettier": "^3.2.5"
   }
 }

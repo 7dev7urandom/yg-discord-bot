@@ -1,6 +1,5 @@
 import {
   Client,
-  Collection,
   Guild,
   IntentsBitField,
   Partials,
@@ -8,12 +7,8 @@ import {
 } from "discord.js";
 import EventEmitter = require("events");
 import { readFileSync } from "fs";
-import {
-  createAudioResource,
-  createAudioPlayer,
-  joinVoiceChannel,
-} from "@discordjs/voice";
-import { execute } from "./commands/utility/ping";
+import * as ping from "./commands/utility/ping";
+import * as stats from "./commands/utility/stats";
 import { token } from "./config.json";
 
 export const blogId = "767695352144461825";
@@ -40,9 +35,14 @@ export const client = new Client({
   partials: [Partials.Channel],
 });
 export const events = new EventEmitter();
+const buildTime = new Date(
+  parseInt(readFileSync("./build_time.txt", "utf8")) * 1000,
+);
 try {
   client.once("ready", async () => {
-    console.log("Client ready!");
+    console.log(
+      "Client ready! Running a build created on " + buildTime.toLocaleString(),
+    );
     constants.mainGuild = client.guilds.cache.get("762299189290991616"); // Youth Group
     client.channels.fetch("823825055736922115").then((x) => {
       constants.logs = x as TextChannel;
@@ -75,7 +75,23 @@ try {
     if (!interaction.isChatInputCommand()) return;
     if (interaction.commandName === "ping") {
       try {
-        await execute(interaction);
+        await ping.execute(interaction);
+      } catch (e) {
+        if (interaction.replied || interaction.deferred) {
+          await interaction.followUp({
+            content: "Error executing the command!",
+            ephemeral: true,
+          });
+        } else {
+          await interaction.reply({
+            content: "Error executing the command!",
+            ephemeral: true,
+          });
+        }
+      }
+    } else if (interaction.commandName === "stats") {
+      try {
+        await stats.execute(interaction);
       } catch (e) {
         if (interaction.replied || interaction.deferred) {
           await interaction.followUp({

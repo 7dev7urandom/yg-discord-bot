@@ -8,12 +8,12 @@ export class BooleanExpression {
   constructor(value: string) {
     this.expression = new Function(
       ...BooleanExpression.funcs,
-      `return ` + value
+      `return ` + value,
     );
   }
   checkMatches(value: Message) {
     return this.expression(
-      ...BooleanExpression.funcs.map((x) => this[x].call(this, value))
+      ...BooleanExpression.funcs.map((x) => this[x].call(this, value)),
     );
   }
   regex(value: Message) {
@@ -30,7 +30,7 @@ export class BooleanExpression {
   }
 }
 BooleanExpression.funcs = Object.getOwnPropertyNames(
-  BooleanExpression.prototype
+  BooleanExpression.prototype,
 ).filter((name) => name !== "constructor" && name !== "checkMatches");
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
@@ -43,14 +43,14 @@ export class ActionExpression {
   }
   execute(value: Message) {
     return this.expression(
-      ...ActionExpression.funcs.map((x) => this[x].call(this, value))
+      ...ActionExpression.funcs.map((x) => this[x].call(this, value)),
     );
   }
   testExecute() {
     return this.expression(
       ...ActionExpression.funcs.map((_) =>
-        _ === "delay" ? this[_].call(this) : () => {}
-      )
+        _ === "delay" ? this[_].call(this) : () => {},
+      ),
     );
   }
   deleteOriginal(value: Message) {
@@ -71,10 +71,10 @@ export class ActionExpression {
   }
 }
 ActionExpression.funcs = Object.getOwnPropertyNames(
-  ActionExpression.prototype
+  ActionExpression.prototype,
 ).filter(
   (name) =>
-    name !== "constructor" && name !== "execute" && name !== "testExecute"
+    name !== "constructor" && name !== "execute" && name !== "testExecute",
 );
 
 let pyFuncs;
@@ -132,14 +132,14 @@ export class PythonActionExpression {
       } catch (e) {
         // if((e as Error).message.includes('*** PY ***'))
         value.channel.send(
-          "Internal python error. I've sent more info to 7dev"
+          "Internal python error. I've sent more info to 7dev",
         );
         (
           value.guild.channels.cache.get("782854127520579607") as TextChannel
         ).send(
           `Python error with message in ${
             (value.channel as TextChannel).name
-          }\n\`\`\`${e}\`\`\``
+          }\n\`\`\`${e}\`\`\``,
         );
         pyFuncs.waitableTimeout(functionId);
         return;

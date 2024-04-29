@@ -14,5 +14,4 @@ To run the bot, you need a `config.json` containing your bot token.
 
 Then compile the typescript into javascript and run with node.js
 
-You can run the [cron.ts](cron.ts) file once a day to send a votd in a specified channel with a token also in `config.json`. 
-
+You can run the [cron.ts](cron.ts) file once a day to send a votd in a specified channel with a token also in `config.json`.
