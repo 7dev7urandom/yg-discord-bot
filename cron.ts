@@ -19,7 +19,7 @@ async function getData(link: string, headers?: any): Promise<string> {
         let datastr = "";
         res.on("data", (chunk) => (datastr += chunk));
         res.on("end", () => r(datastr));
-      },
+      }
     ).end();
   });
 }
@@ -38,13 +38,13 @@ async function getVerse() {
 */
   const json = JSON.parse(
     await getData(
-      `https://www.biblegateway.com/votd/get/?format=json&version=esv`,
-    ),
+      `https://www.biblegateway.com/votd/get/?format=json&version=esv`
+    )
   );
   return json.votd;
 }
 
-const localRun = async () => {
+export const localRun = async () => {
   const channel = await client.channels.fetch("767737683560366080");
   const thing = await getVerse();
   const embed = new EmbedBuilder()
@@ -54,7 +54,7 @@ const localRun = async () => {
         .replace(/<h\d>.*<\/h\d>/g, "")
         .replace(/&.*?;/g, "")
         .replace(/<span class="small-caps" >Lord<\/span>/g, "Lord")
-        .trim(),
+        .trim()
     )
     .setColor([255, 0, 0])
     .setURL(thing.permalink.replace(/,.*/, "") + "&version=ESV");
@@ -66,7 +66,7 @@ promises.readFile("./config.json").then((x) => {
   apiHeaders.Authorization += config.esvtoken;
   // client.login(config.token);
 });
-events.on("ready", async () => {
-  await Promise.all([localRun()]);
-  process.exit();
-});
+// events.on("ready", async () => {
+//   await Promise.all([localRun()]);
+//   process.exit();
+// });

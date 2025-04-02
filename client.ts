@@ -10,6 +10,8 @@ import { readFileSync } from "fs";
 import * as ping from "./commands/utility/ping";
 import * as stats from "./commands/utility/stats";
 import { token } from "./config.json";
+import { schedule } from "node-cron";
+import { localRun } from "./cron";
 
 export const blogId = "767695352144461825";
 export const bibleVerseId = "762664099825451039";
@@ -36,13 +38,19 @@ export const client = new Client({
 });
 export const events = new EventEmitter();
 const buildTime = new Date(
-  parseInt(readFileSync("./build_time.txt", "utf8")) * 1000,
+  parseInt(readFileSync("./build_time.txt", "utf8")) * 1000
 );
 try {
   client.once("ready", async () => {
     console.log(
-      "Client ready! Running a build created on " + buildTime.toLocaleString(),
+      "Client ready! Running a build created on " + buildTime.toLocaleString()
     );
+    console.log("Starting cronjob");
+    // 2am BKK time is 7pm UTC
+    schedule("0 19 * * *", async () => {
+      // Daily verse
+      await localRun();
+    });
     constants.mainGuild = client.guilds.cache.get("762299189290991616"); // Youth Group
     client.channels.fetch("823825055736922115").then((x) => {
       constants.logs = x as TextChannel;
